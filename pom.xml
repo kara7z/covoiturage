@@ -30,61 +30,61 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
-		<!-- H2 Console: Web-based database management for H2 in-memory DB -->
+		<!-- H2 Console -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-h2console</artifactId>
 		</dependency>
-		<!-- Spring Data JPA: Database access with Hibernate and repositories -->
+		<!-- Spring Data JPA -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<!-- Spring Web MVC: REST API and web application support -->
+		<!-- Spring Web MVC -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
-		<!-- Spring Boot DevTools: Automatic restart during development -->
+		<!-- Spring Boot DevTools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- H2 Database: In-memory database for testing -->
+		<!-- H2 Database -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- PostgreSQL JDBC Driver: Connect to PostgreSQL database -->
+		<!-- PostgreSQL JDBC Driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- Lombok: Reduce boilerplate code (@Getter, @Setter, @Data, etc.) -->
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Bean Validation: Validate request data with @Valid, @NotNull, etc. -->
+		<!-- Bean Validation -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
-		<!-- MapStruct: Automatic mapping between Entities and DTOs -->
+		<!-- MapStruct -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>1.5.5.Final</version>
 		</dependency>
-		<!-- MapStruct Processor: Compile-time code generation for MapStruct mappers -->
+		<!-- MapStruct Processor -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapprocessor</artifactId>
@@ -92,13 +92,13 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Spring Data JPA Test: Test JPA repositories -->
+		<!-- Spring Data JPA Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Spring Web MVC Test: Test REST controllers -->
+		<!-- Spring Web MVC Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
