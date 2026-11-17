@@ -207,13 +207,6 @@ classDiagram
 
     User <|-- Driver
     User <|-- Passenger
-
-    Driver "1" --> "0..*" Vehicle : owns
-    Driver "1" --> "0..*" Trip : drives
-    Vehicle "1" --> "0..*" Trip : used_for
-    Trip "1" *-- "2..*" StopPoint : contains
-    Trip "1" --> "0..*" Reservation : has
-    Passenger "1" --> "0..*" Reservation : books
 ```
 
 > **`User` est une classe `@MappedSuperclass`** : elle ne crée pas de table.
