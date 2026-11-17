@@ -137,12 +137,22 @@ Variables d'environnement disponibles :
 
 ```mermaid
 erDiagram
+    USER ||--|| DRIVER : extends
+    USER ||--|| PASSENGER : extends
     DRIVER ||--o{ VEHICLE : owns
     DRIVER ||--o{ TRIP : drives
     VEHICLE ||--o{ TRIP : used_for
     TRIP ||--o{ STOP_POINT : contains
     TRIP ||--o{ RESERVATION : has
     PASSENGER ||--o{ RESERVATION : books
+
+    USER {
+        Long id PK
+        String firstName
+        String lastName
+        String email UK
+        String phone
+    }
 
     DRIVER {
         Long id PK
@@ -203,6 +213,11 @@ erDiagram
         Long trip_id FK
     }
 ```
+
+> **`USER` est une classe `@MappedSuperclass`** : elle ne crée pas de table.
+> Ses colonnes (`id`, `first_name`, `last_name`, `email`, `phone`) sont
+> dupliquées dans `drivers` et `passengers`, et seul `Driver` ajoute
+> `license_number`.
 
 ---
 
