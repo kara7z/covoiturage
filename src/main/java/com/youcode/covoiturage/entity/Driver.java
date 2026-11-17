@@ -18,11 +18,11 @@ import lombok.Setter;
 @Table(name = "drivers")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Driver extends User {
-  @Column(name = "licenseNumber", nullable = false)
+  @Column(name = "license_number", nullable = false, unique = true)
   private String licenseNumber;
 
   @Builder
-  public Driver(String lastName, String firstName, String email,
+  public Driver(String firstName, String lastName, String email,
       String phone, String licenseNumber) {
     super(firstName, lastName, email, phone);
     this.licenseNumber = licenseNumber;
