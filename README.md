@@ -89,9 +89,11 @@ Variables d'environnement disponibles :
    ```bash
    docker compose up -d --build
    ```
-   Le `Dockerfile` est multi-étapes : l'étape Maven exécute
-   `mvn clean package -DskipTests` dans le conteneur, il n'est donc pas
-   nécessaire de lancer `./mvnw package` sur la machine hôte.
+   L'application tourne en mode développement : le conteneur `app` utilise
+   l'étape `dev` du `Dockerfile` (Maven + JDK), monte `./src` et exécute
+   `mvn spring-boot:run`. Aucune compilation sur la machine hôte n'est
+   nécessaire, et **Spring Boot DevTools est actif** (redémarrage automatique
+   dès que les classes sont recompilées).
 
 2. **Vérifier l'état des conteneurs** :
    ```bash
@@ -102,19 +104,33 @@ Variables d'environnement disponibles :
    - **API Backend** : [http://localhost:8081](http://localhost:8081)
    - **PostgreSQL** : `localhost:5433` (identifiants définis dans `.env`)
 
-4. **Consulter les logs** :
+4. **Après une modification du code Java** — recompiler et redémarrer :
+   ```bash
+   docker compose restart app
+   ```
+   Ou déclencher uniquement la recompilation (DevTools redémarre seul) :
+   ```bash
+   docker compose exec app mvn -q compile
+   ```
+
+5. **Consulter les logs** :
    ```bash
    docker compose logs -f app
    ```
 
-5. **Arrêter les conteneurs** :
+6. **Arrêter les conteneurs** :
    ```bash
    docker compose down
    ```
 
-6. **Repartir d'une base vierge** (supprime aussi le volume PostgreSQL) :
+7. **Repartir d'une base vierge** (supprime aussi le volume PostgreSQL) :
    ```bash
    docker compose down -v
+   ```
+
+8. **Image de production** (jar + JRE, sans DevTools) :
+   ```bash
+   docker build --target runtime -t covoiturage:prod .
    ```
 
 ---
