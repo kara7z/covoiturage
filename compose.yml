@@ -19,14 +19,22 @@ services:
       - app-network
 
   app:
-    build: .
+    build:
+      context: .
+      target: dev
     container_name: covoiturage-app
     restart: unless-stopped
+    working_dir: /build
+    entrypoint: ["mvn", "-B", "-ntp", "spring-boot:run"]
+    command: []
     depends_on:
       db:
         condition: service_healthy
     env_file:
       - .env
+    volumes:
+      - ./src:/build/src:ro
+      - m2:/root/.m2
     ports:
       - "8081:8080"
     networks:
@@ -34,6 +42,7 @@ services:
 
 volumes:
   pg_data:
+  m2:
 
 networks:
   app-network:
