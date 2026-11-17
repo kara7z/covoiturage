@@ -1,22 +1,12 @@
 # syntax=docker/dockerfile:1
 
-# ---------- Build stage ----------
-FROM maven:3.9-eclipse-temurin-21 AS build
-WORKDIR /app
-
-COPY pom.xml .
-RUN mvn -B -q dependency:go-offline
-
-COPY src/main ./src/main
-RUN mvn -B -Dmaven.test.skip=true clean package
-
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-COPY --from=build /app/target/*.jar app.jar
+COPY target/covoiturage-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 

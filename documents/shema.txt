@@ -1,0 +1,57 @@
+Driver
+- id: Long
+- lastName: String
+- firstName: String
+- email: String
+- phone: String
+- licenseNumber: String
+Passenger
+- id: Long
+- lastName: String
+- firstName: String
+- email: String
+- phone: String
+Vehicle
+- id: Long
+- brand: String
+- model: String
+- licensePlate: String
+- color: String
+- passengerCapacity: Integer
+- driver: Driver
+Trip
+- id: Long
+- driver: Driver
+- vehicle: Vehicle
+- departureCity: String
+- arrivalCity: String
+- departureDate: LocalDateTime
+- offeredSeats: Integer
+- status: StatutTrajet
+- stopPoints: List<StopPoint>
+StopPoint
+- id: Long
+- trip: Trip
+- city: String
+- order: Integer
+- passingTime: LocalDateTime
+- priceFromDeparture: BigDecimal
+Reservation
+- id: Long
+- passenger: Passenger
+- trip: Trip
+- boardingPoint: String
+- dropOffPoint: String
+- numberOfSeats: Integer
+- totalAmount: BigDecimal
+- reservationDate: LocalDateTime
+- status: StatutReservation
+Enums
+TripStatus (Trip status):
+- PUBLISHED
+- FULL
+- COMPLETED
+- CANCELLED
+ReservationStatus (Reservation status):
+- CONFIRMED
+- CANCELLED
