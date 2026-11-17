@@ -85,33 +85,36 @@ Variables d'environnement disponibles :
 
 ### Avec Docker & Docker Compose (Recommandé)
 
-1. **Construire le jar de l'application** :
-   ```bash
-   ./mvnw clean package -DskipTests
-   ```
-
-2. **Lancer les conteneurs (Base de données + Application)** :
+1. **Construire et lancer les conteneurs (Base de données + Application)** :
    ```bash
    docker compose up -d --build
    ```
+   Le `Dockerfile` est multi-étapes : l'étape Maven exécute
+   `mvn clean package -DskipTests` dans le conteneur, il n'est donc pas
+   nécessaire de lancer `./mvnw package` sur la machine hôte.
 
-3. **Vérifier l'état des conteneurs** :
+2. **Vérifier l'état des conteneurs** :
    ```bash
    docker compose ps
    ```
 
-4. **Accéder aux services** :
+3. **Accéder aux services** :
    - **API Backend** : [http://localhost:8081](http://localhost:8081)
    - **PostgreSQL** : `localhost:5433` (identifiants définis dans `.env`)
 
-5. **Consulter les logs** :
+4. **Consulter les logs** :
    ```bash
    docker compose logs -f app
    ```
 
-6. **Arrêter les conteneurs** :
+5. **Arrêter les conteneurs** :
    ```bash
    docker compose down
+   ```
+
+6. **Repartir d'une base vierge** (supprime aussi le volume PostgreSQL) :
+   ```bash
+   docker compose down -v
    ```
 
 ---
