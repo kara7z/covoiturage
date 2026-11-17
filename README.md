@@ -204,6 +204,35 @@ erDiagram
     }
 ```
 
+### Entité de base `User`
+
+`Driver` et `Passenger` héritent tous les deux de la classe abstraite `User`,
+annotée `@MappedSuperclass`. Elle **ne génère aucune table** : ses colonnes
+(`id`, `first_name`, `last_name`, `email`, `phone`) sont dupliquées dans
+`drivers` et `passengers`. Seul `Driver` ajoute un attribut propre
+(`license_number`).
+
+```mermaid
+classDiagram
+    class User {
+        <<abstract>>
+        Long id
+        String firstName
+        String lastName
+        String email
+        String phone
+    }
+
+    class Driver {
+        String licenseNumber
+    }
+
+    class Passenger
+
+    User <|-- Driver
+    User <|-- Passenger
+```
+
 ---
 
 ## Structure du Projet
