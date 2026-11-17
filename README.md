@@ -136,88 +136,74 @@ Variables d'environnement disponibles :
 ## Modèle de Données
 
 ```mermaid
-erDiagram
-    USER ||--|| DRIVER : extends
-    USER ||--|| PASSENGER : extends
-    DRIVER ||--o{ VEHICLE : owns
-    DRIVER ||--o{ TRIP : drives
-    VEHICLE ||--o{ TRIP : used_for
-    TRIP ||--o{ STOP_POINT : contains
-    TRIP ||--o{ RESERVATION : has
-    PASSENGER ||--o{ RESERVATION : books
-
-    USER {
-        Long id PK
-        String firstName
-        String lastName
-        String email UK
-        String phone
+classDiagram
+    class User {
+        <<abstract>>
+        -Long id
+        -String firstName
+        -String lastName
+        -String email
+        -String phone
     }
 
-    DRIVER {
-        Long id PK
-        String firstName
-        String lastName
-        String email UK
-        String phone
-        String licenseNumber
+    class Driver {
+        -String licenseNumber
     }
 
-    PASSENGER {
-        Long id PK
-        String firstName
-        String lastName
-        String email UK
-        String phone
+    class Passenger
+
+    class Vehicle {
+        -Long id
+        -String brand
+        -String model
+        -String licensePlate
+        -String color
+        -Integer passengerCapacity
     }
 
-    VEHICLE {
-        Long id PK
-        String brand
-        String model
-        String licensePlate
-        String color
-        Integer passengerCapacity
-        Long driver_id FK
+    class Trip {
+        -Long id
+        -String departureCity
+        -String arrivalCity
+        -LocalDateTime departureDate
+        -Integer offeredSeats
+        -TripStatus status
+        -List~StopPoint~ stopPoints
     }
 
-    TRIP {
-        Long id PK
-        String departureCity
-        String arrivalCity
-        LocalDateTime departureDate
-        Integer offeredSeats
-        TripStatus status
-        Long driver_id FK
-        Long vehicle_id FK
+    class StopPoint {
+        -Long id
+        -String city
+        -Integer stopOrder
+        -LocalDateTime passingTime
+        -BigDecimal priceFromDeparture
     }
 
-    STOP_POINT {
-        Long id PK
-        String city
-        Integer stopOrder
-        LocalDateTime passingTime
-        BigDecimal priceFromDeparture
-        Long trip_id FK
+    class Reservation {
+        -Long id
+        -String boardingPoint
+        -String dropOffPoint
+        -Integer numberOfSeats
+        -BigDecimal totalAmount
+        -LocalDateTime reservationDate
+        -ReservationStatus status
     }
 
-    RESERVATION {
-        Long id PK
-        String boardingPoint
-        String dropOffPoint
-        Integer numberOfSeats
-        BigDecimal totalAmount
-        LocalDateTime reservationDate
-        ReservationStatus status
-        Long passenger_id FK
-        Long trip_id FK
-    }
+    User <|-- Driver
+    User <|-- Passenger
+
+    Driver "1" --> "0..*" Vehicle : owns
+    Driver "1" --> "0..*" Trip : drives
+    Vehicle "1" --> "0..*" Trip : used_for
+    Trip "1" *-- "2..*" StopPoint : contains
+    Trip "1" --> "0..*" Reservation : has
+    Passenger "1" --> "0..*" Reservation : books
 ```
 
-> **`USER` est une classe `@MappedSuperclass`** : elle ne crée pas de table.
-> Ses colonnes (`id`, `first_name`, `last_name`, `email`, `phone`) sont
-> dupliquées dans `drivers` et `passengers`, et seul `Driver` ajoute
-> `license_number`.
+> **`User` est une classe `@MappedSuperclass`** : elle ne crée pas de table.
+> Ses attributs sont hérités par `Driver` et `Passenger` (ils ne sont donc pas
+> répétés ici), et physiquement dupliqués dans les colonnes de `drivers` et
+> `passengers`. Seul `Driver` ajoute `licenseNumber`.
 
 ---
 
