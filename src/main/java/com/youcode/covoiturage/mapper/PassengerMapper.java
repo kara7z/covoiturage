@@ -2,9 +2,9 @@ package com.youcode.covoiturage.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
+import com.youcode.covoiturage.config.MapStructConfig;
 import com.youcode.covoiturage.dto.PassangerRequestDTO;
 import com.youcode.covoiturage.dto.PassangerResponseDTO;
 import com.youcode.covoiturage.entity.Passenger;
@@ -12,7 +12,7 @@ import com.youcode.covoiturage.entity.Passenger;
 /**
  * PassengerMapper
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(config = MapStructConfig.class)
 public interface PassengerMapper {
 
   Passenger toEntity(PassangerRequestDTO requestDTO);

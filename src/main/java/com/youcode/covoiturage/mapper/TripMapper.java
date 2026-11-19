@@ -2,9 +2,9 @@ package com.youcode.covoiturage.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
+import com.youcode.covoiturage.config.MapStructConfig;
 import com.youcode.covoiturage.dto.TripRequestDTO;
 import com.youcode.covoiturage.dto.TripResponseDTO;
 import com.youcode.covoiturage.entity.Driver;
@@ -14,7 +14,7 @@ import com.youcode.covoiturage.entity.Vehicle;
 /**
  * TripMapper
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(config = MapStructConfig.class)
 public interface TripMapper {
 
   @Mapping(target = "stopPoints", ignore = true)

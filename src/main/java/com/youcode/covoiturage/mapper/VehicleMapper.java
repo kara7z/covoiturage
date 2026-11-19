@@ -2,9 +2,9 @@ package com.youcode.covoiturage.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
+import com.youcode.covoiturage.config.MapStructConfig;
 import com.youcode.covoiturage.dto.VehicleRequestDTO;
 import com.youcode.covoiturage.dto.VehicleResponseDTO;
 import com.youcode.covoiturage.entity.Driver;
@@ -13,7 +13,7 @@ import com.youcode.covoiturage.entity.Vehicle;
 /**
  * VehicleMapper
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(config = MapStructConfig.class)
 public interface VehicleMapper {
 
   @Mapping(target = "driver", source = "driver")
