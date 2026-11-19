@@ -20,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -65,6 +66,20 @@ public class Trip {
 
   @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<StopPoint> stopPoints = new ArrayList<>();
+
+  @Builder
+  public Trip(Driver driver, Vehicle vehicle, String departureCity, String arrivalCity,
+      LocalDateTime departureDate, Integer offeredSeats, TripStatus status,
+      List<StopPoint> stopPoints) {
+    this.driver = driver;
+    this.vehicle = vehicle;
+    this.departureCity = departureCity;
+    this.arrivalCity = arrivalCity;
+    this.departureDate = departureDate;
+    this.offeredSeats = offeredSeats;
+    this.status = status;
+    this.stopPoints = stopPoints != null ? stopPoints : new ArrayList<>();
+  }
 
   public void addStopPoint(StopPoint stopPoint) {
     stopPoints.add(stopPoint);
