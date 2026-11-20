@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 public class BusinessRuleException extends BusinessException {
 
     private static final String ERROR_CODE = "BUSINESS_RULE_VIOLATION";
-    private static final HttpStatus HTTP_STATUS = HttpStatus.BAD_REQUEST;
+    private static final HttpStatus HTTP_STATUS = HttpStatus.CONFLICT;
 
     public BusinessRuleException(String message) {
         super(ERROR_CODE, message, HTTP_STATUS);
