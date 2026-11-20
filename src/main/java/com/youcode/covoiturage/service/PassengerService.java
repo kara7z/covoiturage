@@ -16,6 +16,8 @@ public interface PassengerService {
 
   List<PassangerResponseDTO> findAll();
 
+  PassangerResponseDTO findByEmail(String email);
+
   PassangerResponseDTO update(Long id, PassangerRequestDTO requestDTO);
 
   void delete(Long id);
