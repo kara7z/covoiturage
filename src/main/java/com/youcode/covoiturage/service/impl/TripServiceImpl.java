@@ -18,10 +18,12 @@ import com.youcode.covoiturage.repository.VehicleRepository;
 import com.youcode.covoiturage.service.TripService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * TripServiceImpl
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,19 +37,24 @@ public class TripServiceImpl implements TripService {
   @Override
   @Transactional
   public TripResponseDTO create(TripRequestDTO requestDTO) {
+    log.info("Creating trip for driver id {} with vehicle id {}", requestDTO.driverId(), requestDTO.vehicleId());
     Driver driver = findDriver(requestDTO.driverId());
     Vehicle vehicle = findVehicle(requestDTO.vehicleId());
     Trip trip = tripMapper.toEntity(requestDTO, driver, vehicle);
-    return tripMapper.toResponseDTO(tripRepository.save(trip));
+    TripResponseDTO response = tripMapper.toResponseDTO(tripRepository.save(trip));
+    log.info("Trip created with id {}", response.id());
+    return response;
   }
 
   @Override
   public TripResponseDTO findById(Long id) {
+    log.debug("Fetching trip with id {}", id);
     return tripMapper.toResponseDTO(findEntity(id));
   }
 
   @Override
   public List<TripResponseDTO> findAll() {
+    log.debug("Fetching all trips");
     return tripRepository.findAll().stream()
         .map(tripMapper::toResponseDTO)
         .toList();
@@ -56,31 +63,45 @@ public class TripServiceImpl implements TripService {
   @Override
   @Transactional
   public TripResponseDTO update(Long id, TripRequestDTO requestDTO) {
+    log.info("Updating trip with id {}", id);
     Trip trip = findEntity(id);
     Driver driver = findDriver(requestDTO.driverId());
     Vehicle vehicle = findVehicle(requestDTO.vehicleId());
     tripMapper.updateEntity(trip, requestDTO, driver, vehicle);
-    return tripMapper.toResponseDTO(tripRepository.save(trip));
+    TripResponseDTO response = tripMapper.toResponseDTO(tripRepository.save(trip));
+    log.info("Trip updated with id {}", response.id());
+    return response;
   }
 
   @Override
   @Transactional
   public void delete(Long id) {
+    log.info("Deleting trip with id {}", id);
     tripRepository.delete(findEntity(id));
+    log.info("Trip deleted with id {}", id);
   }
 
   private Trip findEntity(Long id) {
     return tripRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Trip not found with id " + id));
+        .orElseThrow(() -> {
+          log.warn("Trip not found with id {}", id);
+          return new ResourceNotFoundException("Trip not found with id " + id);
+        });
   }
 
   private Driver findDriver(Long id) {
     return driverRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Driver not found with id " + id));
+        .orElseThrow(() -> {
+          log.warn("Driver not found with id {}", id);
+          return new ResourceNotFoundException("Driver not found with id " + id);
+        });
   }
 
   private Vehicle findVehicle(Long id) {
     return vehicleRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found with id " + id));
+        .orElseThrow(() -> {
+          log.warn("Vehicle not found with id {}", id);
+          return new ResourceNotFoundException("Vehicle not found with id " + id);
+        });
   }
 }

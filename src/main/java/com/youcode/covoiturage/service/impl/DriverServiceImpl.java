@@ -14,10 +14,12 @@ import com.youcode.covoiturage.repository.DriverRepository;
 import com.youcode.covoiturage.service.DriverService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * DriverServiceImpl
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,17 +31,22 @@ public class DriverServiceImpl implements DriverService {
   @Override
   @Transactional
   public DriverResponseDTO create(DriverRequestDTO requestDTO) {
+    log.info("Creating driver with email {}", requestDTO.email());
     Driver driver = driverMapper.toEntity(requestDTO);
-    return driverMapper.toResponseDTO(driverRepository.save(driver));
+    DriverResponseDTO response = driverMapper.toResponseDTO(driverRepository.save(driver));
+    log.info("Driver created with id {}", response.id());
+    return response;
   }
 
   @Override
   public DriverResponseDTO findById(Long id) {
+    log.debug("Fetching driver with id {}", id);
     return driverMapper.toResponseDTO(findEntity(id));
   }
 
   @Override
   public List<DriverResponseDTO> findAll() {
+    log.debug("Fetching all drivers");
     return driverRepository.findAll().stream()
         .map(driverMapper::toResponseDTO)
         .toList();
@@ -48,19 +55,27 @@ public class DriverServiceImpl implements DriverService {
   @Override
   @Transactional
   public DriverResponseDTO update(Long id, DriverRequestDTO requestDTO) {
+    log.info("Updating driver with id {}", id);
     Driver driver = findEntity(id);
     driverMapper.updateEntity(driver, requestDTO);
-    return driverMapper.toResponseDTO(driverRepository.save(driver));
+    DriverResponseDTO response = driverMapper.toResponseDTO(driverRepository.save(driver));
+    log.info("Driver updated with id {}", response.id());
+    return response;
   }
 
   @Override
   @Transactional
   public void delete(Long id) {
+    log.info("Deleting driver with id {}", id);
     driverRepository.delete(findEntity(id));
+    log.info("Driver deleted with id {}", id);
   }
 
   private Driver findEntity(Long id) {
     return driverRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Driver not found with id " + id));
+        .orElseThrow(() -> {
+          log.warn("Driver not found with id {}", id);
+          return new ResourceNotFoundException("Driver not found with id " + id);
+        });
   }
 }
