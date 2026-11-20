@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.youcode.covoiturage.dto.DriverRequestDTO;
 import com.youcode.covoiturage.dto.DriverResponseDTO;
 import com.youcode.covoiturage.entity.Driver;
+import com.youcode.covoiturage.exception.AlreadyExistsException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.DriverMapper;
 import com.youcode.covoiturage.repository.DriverRepository;
@@ -32,6 +33,8 @@ public class DriverServiceImpl implements DriverService {
   @Transactional
   public DriverResponseDTO create(DriverRequestDTO requestDTO) {
     log.info("Creating driver with email {}", requestDTO.email());
+    ensureEmailAvailable(requestDTO.email(), null);
+    ensureLicenseNumberAvailable(requestDTO.licenseNumber(), null);
     Driver driver = driverMapper.toEntity(requestDTO);
     DriverResponseDTO response = driverMapper.toResponseDTO(driverRepository.save(driver));
     log.info("Driver created with id {}", response.id());
@@ -53,10 +56,23 @@ public class DriverServiceImpl implements DriverService {
   }
 
   @Override
+  public List<DriverResponseDTO> search(String query) {
+    log.debug("Searching drivers with query {}", query);
+    String term = query == null ? "" : query.trim();
+    return driverRepository
+        .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(term, term, term)
+        .stream()
+        .map(driverMapper::toResponseDTO)
+        .toList();
+  }
+
+  @Override
   @Transactional
   public DriverResponseDTO update(Long id, DriverRequestDTO requestDTO) {
     log.info("Updating driver with id {}", id);
     Driver driver = findEntity(id);
+    ensureEmailAvailable(requestDTO.email(), id);
+    ensureLicenseNumberAvailable(requestDTO.licenseNumber(), id);
     driverMapper.updateEntity(driver, requestDTO);
     DriverResponseDTO response = driverMapper.toResponseDTO(driverRepository.save(driver));
     log.info("Driver updated with id {}", response.id());
@@ -77,5 +93,25 @@ public class DriverServiceImpl implements DriverService {
           log.warn("Driver not found with id {}", id);
           return new ResourceNotFoundException("Driver not found with id " + id);
         });
+  }
+
+  private void ensureEmailAvailable(String email, Long currentId) {
+    boolean exists = currentId == null
+        ? driverRepository.existsByEmail(email)
+        : driverRepository.existsByEmailAndIdNot(email, currentId);
+    if (exists) {
+      log.warn("Driver email already in use: {}", email);
+      throw new AlreadyExistsException("Driver with email " + email + " already exists");
+    }
+  }
+
+  private void ensureLicenseNumberAvailable(String licenseNumber, Long currentId) {
+    boolean exists = currentId == null
+        ? driverRepository.existsByLicenseNumber(licenseNumber)
+        : driverRepository.existsByLicenseNumberAndIdNot(licenseNumber, currentId);
+    if (exists) {
+      log.warn("Driver license number already in use: {}", licenseNumber);
+      throw new AlreadyExistsException("Driver with license number " + licenseNumber + " already exists");
+    }
   }
 }

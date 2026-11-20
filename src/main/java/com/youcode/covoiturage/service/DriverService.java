@@ -16,6 +16,8 @@ public interface DriverService {
 
   List<DriverResponseDTO> findAll();
 
+  List<DriverResponseDTO> search(String query);
+
   DriverResponseDTO update(Long id, DriverRequestDTO requestDTO);
 
   void delete(Long id);
