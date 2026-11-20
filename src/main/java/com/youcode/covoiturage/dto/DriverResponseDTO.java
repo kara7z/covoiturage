@@ -1,14 +1,12 @@
 package com.youcode.covoiturage.dto;
 
 /**
- * Driver representation returned by the API.
+ * DriverResponseDTO
  */
 public record DriverResponseDTO(
     Long id,
-    String firstName,
-    String lastName,
+    String fullName,
     String email,
     String phone,
-    String licenseNumber
-) {
+    String licenseNumber) {
 }

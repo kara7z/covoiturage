@@ -1,19 +1,26 @@
 package com.youcode.covoiturage.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
+import com.youcode.covoiturage.config.MapStructConfig;
 import com.youcode.covoiturage.dto.DriverRequestDTO;
 import com.youcode.covoiturage.dto.DriverResponseDTO;
 import com.youcode.covoiturage.entity.Driver;
 
 /**
- * Converts Driver DTOs to/from the JPA entity.
+ * DriverMapper
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(config = MapStructConfig.class)
 public interface DriverMapper {
 
-  Driver toEntity(DriverRequestDTO request);
+  @Mapping(target = "fullName", expression = "java(driver.getFirstName() + \" \" + driver.getLastName())")
+  DriverResponseDTO toResponseDTO(Driver driver);
 
-  DriverResponseDTO toResponse(Driver driver);
+  Driver toEntity(DriverRequestDTO requestDTO);
+
+  DriverRequestDTO toRequestDTO(Driver driver);
+
+  void updateEntity(@MappingTarget Driver driver, DriverRequestDTO requestDTO);
 }
