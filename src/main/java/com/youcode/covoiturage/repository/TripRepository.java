@@ -9,4 +9,6 @@ import com.youcode.covoiturage.entity.Trip;
  */
 public interface TripRepository extends JpaRepository<Trip, Long> {
 
+  boolean existsByVehicleId(Long vehicleId);
+
 }
