@@ -2,6 +2,10 @@ package com.youcode.covoiturage.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.youcode.covoiturage.dto.PassangerRequestDTO;
 import com.youcode.covoiturage.dto.PassangerResponseDTO;
+import com.youcode.covoiturage.dto.ReservationResponseDTO;
 import com.youcode.covoiturage.service.PassengerService;
 
 import jakarta.validation.Valid;
@@ -47,6 +52,13 @@ public class PassengerController {
   @GetMapping("/search")
   public PassangerResponseDTO findByEmail(@RequestParam("email") String email) {
     return passengerService.findByEmail(email);
+  }
+
+  @GetMapping("/{id}/reservations")
+  public Page<ReservationResponseDTO> findReservationHistory(
+      @PathVariable Long id,
+      @PageableDefault(size = 20, sort = "reservationDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    return passengerService.findReservationHistory(id, pageable);
   }
 
   @PutMapping("/{id}")

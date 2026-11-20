@@ -2,16 +2,23 @@ package com.youcode.covoiturage.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.youcode.covoiturage.dto.PassangerRequestDTO;
 import com.youcode.covoiturage.dto.PassangerResponseDTO;
+import com.youcode.covoiturage.dto.ReservationResponseDTO;
 import com.youcode.covoiturage.entity.Passenger;
 import com.youcode.covoiturage.exception.AlreadyExistsException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.PassengerMapper;
+import com.youcode.covoiturage.mapper.ReservationMapper;
 import com.youcode.covoiturage.repository.PassengerRepository;
+import com.youcode.covoiturage.repository.ReservationRepository;
 import com.youcode.covoiturage.service.PassengerService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +35,8 @@ public class PassengerServiceImpl implements PassengerService {
 
   private final PassengerRepository passengerRepository;
   private final PassengerMapper passengerMapper;
+  private final ReservationRepository reservationRepository;
+  private final ReservationMapper reservationMapper;
 
   @Override
   @Transactional
@@ -60,6 +69,15 @@ public class PassengerServiceImpl implements PassengerService {
     return passengerRepository.findByEmail(email)
         .map(passengerMapper::toResponseDTO)
         .orElseThrow(() -> new ResourceNotFoundException("Passenger not found with email " + email));
+  }
+
+  @Override
+  public Page<ReservationResponseDTO> findReservationHistory(Long passengerId, Pageable pageable) {
+    findEntity(passengerId);
+    Pageable dateSortedPage = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+        Sort.by(Sort.Direction.DESC, "reservationDate"));
+    return reservationRepository.findByPassengerId(passengerId, dateSortedPage)
+        .map(reservationMapper::toResponseDTO);
   }
 
   @Override
