@@ -114,9 +114,7 @@ class DriverServiceImplTest {
 
   @Test
   void search_returnsMatchingDrivers() {
-    when(driverRepository
-        .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-            "hamid", "hamid", "hamid"))
+    when(driverRepository.searchByNameOrEmail("hamid"))
         .thenReturn(List.of(driver));
     when(driverMapper.toResponseDTO(driver)).thenReturn(response);
 

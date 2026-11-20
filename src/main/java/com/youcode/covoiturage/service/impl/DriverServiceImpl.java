@@ -59,8 +59,7 @@ public class DriverServiceImpl implements DriverService {
   public List<DriverResponseDTO> search(String query) {
     log.debug("Searching drivers with query {}", query);
     String term = query == null ? "" : query.trim();
-    return driverRepository
-        .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(term, term, term)
+    return driverRepository.searchByNameOrEmail(term)
         .stream()
         .map(driverMapper::toResponseDTO)
         .toList();
