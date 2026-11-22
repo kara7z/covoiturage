@@ -21,9 +21,11 @@ import com.youcode.covoiturage.dto.TripResponseDTO;
 import com.youcode.covoiturage.dto.TripSearchResponseDTO;
 import com.youcode.covoiturage.dto.TripStopRequestDTO;
 import com.youcode.covoiturage.entity.Driver;
+import com.youcode.covoiturage.entity.Reservation;
 import com.youcode.covoiturage.entity.StopPoint;
 import com.youcode.covoiturage.entity.Trip;
 import com.youcode.covoiturage.entity.Vehicle;
+import com.youcode.covoiturage.enums.ReservationStatus;
 import com.youcode.covoiturage.enums.TripStatus;
 import com.youcode.covoiturage.exception.BadRequestException;
 import com.youcode.covoiturage.exception.BusinessRuleException;
@@ -146,6 +148,70 @@ public class TripServiceImpl implements TripService {
     log.info("Deleting trip with id {}", id);
     tripRepository.delete(findEntity(id));
     log.info("Trip deleted with id {}", id);
+  }
+
+  @Override
+  @Transactional
+  public void cancel(Long id, Long driverId) {
+    log.info("Cancelling trip id {} by driver id {}", id, driverId);
+    Trip trip = tripRepository.findDetailById(id)
+        .orElseThrow(() -> {
+          log.warn("Trip not found with id {}", id);
+          return new ResourceNotFoundException("Trip not found with id " + id);
+        });
+
+    if (!trip.getDriver().getId().equals(driverId)) {
+      log.warn("Driver {} is not the owner of trip {}", driverId, id);
+      throw new ForbiddenException("NOT_OWNER", "Trip does not belong to driver " + driverId);
+    }
+
+    if (trip.getStatus() == TripStatus.COMPLETED || trip.getStatus() == TripStatus.CANCELLED) {
+      throw new BusinessRuleException("FINAL_STATUS",
+          "Trip " + id + " is already " + trip.getStatus());
+    }
+
+    List<Reservation> reservations =
+        reservationRepository.findConfirmedByTripId(id);
+    for (Reservation r : reservations) {
+      r.setStatus(ReservationStatus.CANCELLED);
+    }
+    reservationRepository.saveAll(reservations);
+
+    trip.setStatus(TripStatus.CANCELLED);
+    tripRepository.save(trip);
+
+    log.info("Trip {} cancelled with {} reservations", id, reservations.size());
+  }
+
+  @Override
+  @Transactional
+  public void complete(Long id, Long driverId) {
+    log.info("Completing trip id {} by driver id {}", id, driverId);
+    Trip trip = tripRepository.findDetailById(id)
+        .orElseThrow(() -> {
+          log.warn("Trip not found with id {}", id);
+          return new ResourceNotFoundException("Trip not found with id " + id);
+        });
+
+    if (!trip.getDriver().getId().equals(driverId)) {
+      log.warn("Driver {} is not the owner of trip {}", driverId, id);
+      throw new ForbiddenException("NOT_OWNER", "Trip does not belong to driver " + driverId);
+    }
+
+    if (trip.getStatus() == TripStatus.COMPLETED || trip.getStatus() == TripStatus.CANCELLED) {
+      throw new BusinessRuleException("FINAL_STATUS",
+          "Trip " + id + " is already " + trip.getStatus());
+    }
+
+    if (trip.getDepartureDate().isAfter(LocalDateTime.now())) {
+      throw new BadRequestException("TRIP_NOT_DEPARTED",
+          "Trip " + id + " has not departed yet");
+    }
+
+    trip.setStatus(TripStatus.COMPLETED);
+    tripRepository.save(trip);
+
+    log.info("Trip {} completed", id);
   }
 
   private void applyRoute(Trip trip, List<TripStopRequestDTO> stops) {

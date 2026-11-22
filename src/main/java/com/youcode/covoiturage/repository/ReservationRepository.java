@@ -1,5 +1,6 @@
 package com.youcode.covoiturage.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -42,5 +43,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
       where r.id = :id
       """)
   Optional<Reservation> findByIdFetchTrip(@Param("id") Long id);
+
+  @Query("""
+      select r from Reservation r
+      where r.trip.id = :tripId
+        and r.status = com.youcode.covoiturage.enums.ReservationStatus.CONFIRMED
+      """)
+  List<Reservation> findConfirmedByTripId(@Param("tripId") Long tripId);
 
 }
