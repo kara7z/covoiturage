@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.youcode.covoiturage.entity.Reservation;
+import com.youcode.covoiturage.enums.ReservationStatus;
 
 /**
  * ReservationRepository
@@ -21,5 +22,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         and r.status = com.youcode.covoiturage.enums.ReservationStatus.CONFIRMED
       """)
   Long sumConfirmedSeatsByTripId(@Param("tripId") Long tripId);
+
+  @Query("""
+      select count(r) > 0 from Reservation r
+      where r.passenger.id = :passengerId
+        and r.trip.id = :tripId
+        and r.status = com.youcode.covoiturage.enums.ReservationStatus.CONFIRMED
+      """)
+  boolean existsByPassengerIdAndTripIdAndStatus(
+      @Param("passengerId") Long passengerId,
+      @Param("tripId") Long tripId,
+      @Param("status") ReservationStatus status);
 
 }

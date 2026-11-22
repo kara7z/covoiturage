@@ -1,5 +1,8 @@
 package com.youcode.covoiturage.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +12,12 @@ import com.youcode.covoiturage.dto.ReservationRequestDTO;
 import com.youcode.covoiturage.dto.ReservationResponseDTO;
 import com.youcode.covoiturage.entity.Passenger;
 import com.youcode.covoiturage.entity.Reservation;
+import com.youcode.covoiturage.entity.StopPoint;
 import com.youcode.covoiturage.entity.Trip;
+import com.youcode.covoiturage.enums.ReservationStatus;
+import com.youcode.covoiturage.enums.TripStatus;
+import com.youcode.covoiturage.exception.BadRequestException;
+import com.youcode.covoiturage.exception.BusinessRuleException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.ReservationMapper;
 import com.youcode.covoiturage.repository.PassengerRepository;
@@ -41,10 +49,40 @@ public class ReservationServiceImpl implements ReservationService {
         requestDTO.tripId());
     Passenger passenger = findPassenger(requestDTO.passengerId());
     Trip trip = findTrip(requestDTO.tripId());
-    Reservation reservation = reservationMapper.toEntity(requestDTO, passenger, trip);
-    ReservationResponseDTO response = reservationMapper.toResponseDTO(reservationRepository.save(reservation));
-    log.info("Reservation created with id {}", response.id());
-    return response;
+
+    validateTripIsPublished(trip);
+
+    StopPoint boardingStop = findStopPoint(trip, requestDTO.boardingPoint(), "boarding");
+    StopPoint dropOffStop = findStopPoint(trip, requestDTO.dropOffPoint(), "drop off");
+
+    validateBoardingBeforeDropOff(boardingStop, dropOffStop);
+
+    BigDecimal segmentPrice = dropOffStop.getPriceFromDeparture()
+        .subtract(boardingStop.getPriceFromDeparture());
+    BigDecimal amount = segmentPrice
+        .multiply(BigDecimal.valueOf(requestDTO.numberOfSeats()))
+        .setScale(2, RoundingMode.HALF_UP);
+
+    validateSeatsAvailable(trip, requestDTO.numberOfSeats());
+    validateNoDuplicateReservation(passenger, trip);
+
+    Reservation reservation = Reservation.builder()
+        .passenger(passenger)
+        .trip(trip)
+        .boardingPoint(requestDTO.boardingPoint())
+        .dropOffPoint(requestDTO.dropOffPoint())
+        .numberOfSeats(requestDTO.numberOfSeats())
+        .totalAmount(amount)
+        .reservationDate(LocalDateTime.now())
+        .status(ReservationStatus.CONFIRMED)
+        .build();
+
+    reservation = reservationRepository.save(reservation);
+
+    updateTripStatusIfFull(trip);
+
+    log.info("Reservation created with id {}", reservation.getId());
+    return reservationMapper.toResponseDTO(reservation);
   }
 
   @Override
@@ -99,10 +137,58 @@ public class ReservationServiceImpl implements ReservationService {
   }
 
   private Trip findTrip(Long id) {
-    return tripRepository.findById(id)
+    return tripRepository.findDetailById(id)
         .orElseThrow(() -> {
           log.warn("Trip not found with id {}", id);
           return new ResourceNotFoundException("Trip not found with id " + id);
         });
+  }
+
+  private void validateTripIsPublished(Trip trip) {
+    if (trip.getStatus() != TripStatus.PUBLISHED) {
+      throw new BadRequestException("TRIP_NOT_PUBLISHED",
+          "Trip " + trip.getId() + " is not published");
+    }
+  }
+
+  private StopPoint findStopPoint(Trip trip, String city, String label) {
+    return trip.getStopPoints().stream()
+        .filter(sp -> sp.getCity().equalsIgnoreCase(city))
+        .findFirst()
+        .orElseThrow(() -> new BadRequestException("INVALID_" + label.toUpperCase() + "_POINT",
+            label + " point " + city + " is not a stop on this trip"));
+  }
+
+  private void validateBoardingBeforeDropOff(StopPoint boarding, StopPoint dropOff) {
+    if (boarding.getStopOrder() >= dropOff.getStopOrder()) {
+      throw new BadRequestException("REVERSED_STOPS",
+          "Boarding stop must come before drop off stop");
+    }
+  }
+
+  private void validateSeatsAvailable(Trip trip, int numberOfSeats) {
+    Long confirmedSeats = reservationRepository.sumConfirmedSeatsByTripId(trip.getId());
+    long remainingSeats = Math.max(trip.getOfferedSeats() - confirmedSeats, 0);
+    if (numberOfSeats > remainingSeats) {
+      throw new BusinessRuleException("TRIP_FULL",
+          "Not enough seats available. Remaining: " + remainingSeats);
+    }
+  }
+
+  private void validateNoDuplicateReservation(Passenger passenger, Trip trip) {
+    if (reservationRepository.existsByPassengerIdAndTripIdAndStatus(
+        passenger.getId(), trip.getId(), ReservationStatus.CONFIRMED)) {
+      throw new BusinessRuleException("DUPLICATE_RESERVATION",
+          "Passenger " + passenger.getId() + " already has a confirmed reservation on trip " + trip.getId());
+    }
+  }
+
+  private void updateTripStatusIfFull(Trip trip) {
+    Long confirmedSeats = reservationRepository.sumConfirmedSeatsByTripId(trip.getId());
+    long remainingSeats = Math.max(trip.getOfferedSeats() - confirmedSeats, 0);
+    if (remainingSeats == 0 && trip.getStatus() == TripStatus.PUBLISHED) {
+      trip.setStatus(TripStatus.FULL);
+      tripRepository.save(trip);
+    }
   }
 }
