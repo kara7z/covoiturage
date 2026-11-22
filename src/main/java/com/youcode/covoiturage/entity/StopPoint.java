@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.CheckConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,9 @@ import lombok.Setter;
 @Table(name = "stop_points", uniqueConstraints = {
     @UniqueConstraint(name = "uk_stop_point_trip_city", columnNames = { "trip_id", "city" }),
     @UniqueConstraint(name = "uk_stop_point_trip_order", columnNames = { "trip_id", "stop_order" })
+}, check = {
+    @CheckConstraint(name = "ck_stop_point_order_nonnegative", constraint = "stop_order >= 0"),
+    @CheckConstraint(name = "ck_stop_point_price_nonnegative", constraint = "price_from_departure >= 0")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
