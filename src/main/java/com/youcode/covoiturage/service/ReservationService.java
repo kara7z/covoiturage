@@ -19,4 +19,6 @@ public interface ReservationService {
   ReservationResponseDTO update(Long id, ReservationRequestDTO requestDTO);
 
   void delete(Long id);
+
+  void cancel(Long id, Long passengerId);
 }

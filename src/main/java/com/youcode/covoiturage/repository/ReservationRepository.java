@@ -1,5 +1,7 @@
 package com.youcode.covoiturage.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,5 +35,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
       @Param("passengerId") Long passengerId,
       @Param("tripId") Long tripId,
       @Param("status") ReservationStatus status);
+
+  @Query("""
+      select r from Reservation r
+      join fetch r.trip
+      where r.id = :id
+      """)
+  Optional<Reservation> findByIdFetchTrip(@Param("id") Long id);
 
 }

@@ -18,6 +18,7 @@ import com.youcode.covoiturage.enums.ReservationStatus;
 import com.youcode.covoiturage.enums.TripStatus;
 import com.youcode.covoiturage.exception.BadRequestException;
 import com.youcode.covoiturage.exception.BusinessRuleException;
+import com.youcode.covoiturage.exception.ForbiddenException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.ReservationMapper;
 import com.youcode.covoiturage.repository.PassengerRepository;
@@ -83,6 +84,42 @@ public class ReservationServiceImpl implements ReservationService {
 
     log.info("Reservation created with id {}", reservation.getId());
     return reservationMapper.toResponseDTO(reservation);
+  }
+
+  @Override
+  @Transactional
+  public void cancel(Long id, Long passengerId) {
+    log.info("Cancelling reservation id {} for passenger id {}", id, passengerId);
+    Reservation reservation = reservationRepository.findByIdFetchTrip(id)
+        .orElseThrow(() -> {
+          log.warn("Reservation not found with id {}", id);
+          return new ResourceNotFoundException("Reservation not found with id " + id);
+        });
+
+    if (!reservation.getPassenger().getId().equals(passengerId)) {
+      log.warn("Passenger {} is not the owner of reservation {}", passengerId, id);
+      throw new ForbiddenException("NOT_OWNER",
+          "Reservation does not belong to passenger " + passengerId);
+    }
+
+    if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+      throw new BusinessRuleException("ALREADY_CANCELLED",
+          "Reservation " + id + " is already cancelled");
+    }
+
+    Trip trip = reservation.getTrip();
+    LocalDateTime deadline = trip.getDepartureDate().minusHours(24);
+    if (LocalDateTime.now().isAfter(deadline)) {
+      throw new BusinessRuleException("CANCELLATION_TOO_LATE",
+          "Cancellation must be done at least 24 hours before departure");
+    }
+
+    reservation.setStatus(ReservationStatus.CANCELLED);
+    reservationRepository.save(reservation);
+
+    updateTripStatusIfSeatsAvailable(trip);
+
+    log.info("Reservation {} cancelled", id);
   }
 
   @Override
@@ -188,6 +225,15 @@ public class ReservationServiceImpl implements ReservationService {
     long remainingSeats = Math.max(trip.getOfferedSeats() - confirmedSeats, 0);
     if (remainingSeats == 0 && trip.getStatus() == TripStatus.PUBLISHED) {
       trip.setStatus(TripStatus.FULL);
+      tripRepository.save(trip);
+    }
+  }
+
+  private void updateTripStatusIfSeatsAvailable(Trip trip) {
+    Long confirmedSeats = reservationRepository.sumConfirmedSeatsByTripId(trip.getId());
+    long remainingSeats = Math.max(trip.getOfferedSeats() - confirmedSeats, 0);
+    if (remainingSeats > 0 && trip.getStatus() == TripStatus.FULL) {
+      trip.setStatus(TripStatus.PUBLISHED);
       tripRepository.save(trip);
     }
   }
