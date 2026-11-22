@@ -3,6 +3,8 @@ package com.youcode.covoiturage.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,5 +39,18 @@ public class ReservationController {
       @PathVariable Long id,
       @RequestParam Long passengerId) {
     reservationService.cancel(id, passengerId);
+  }
+
+  @PutMapping("/{id}")
+  public ReservationResponseDTO update(@PathVariable Long id,
+      @RequestParam Long passengerId,
+      @Valid @RequestBody ReservationRequestDTO requestDTO) {
+    return reservationService.update(id, passengerId, requestDTO);
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable Long id, @RequestParam Long passengerId) {
+    reservationService.delete(id, passengerId);
   }
 }

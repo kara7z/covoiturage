@@ -14,6 +14,7 @@ import com.youcode.covoiturage.dto.PassangerResponseDTO;
 import com.youcode.covoiturage.dto.ReservationResponseDTO;
 import com.youcode.covoiturage.entity.Passenger;
 import com.youcode.covoiturage.exception.AlreadyExistsException;
+import com.youcode.covoiturage.exception.ForbiddenException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.PassengerMapper;
 import com.youcode.covoiturage.mapper.ReservationMapper;
@@ -72,12 +73,33 @@ public class PassengerServiceImpl implements PassengerService {
   }
 
   @Override
-  public Page<ReservationResponseDTO> findReservationHistory(Long passengerId, Pageable pageable) {
-    findEntity(passengerId);
+  public Page<ReservationResponseDTO> findReservationHistory(Long passengerId,
+      Long requestingPassengerId, Pageable pageable) {
+    Passenger passenger = findEntity(passengerId);
+    ensurePassengerOwnership(requestingPassengerId, passenger);
     Pageable dateSortedPage = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
         Sort.by(Sort.Direction.DESC, "reservationDate"));
     return reservationRepository.findByPassengerId(passengerId, dateSortedPage)
         .map(reservationMapper::toResponseDTO);
+  }
+
+  @Override
+  public Page<ReservationResponseDTO> findReservationHistory(Long passengerId, Pageable pageable) {
+    return findReservationHistory(passengerId, passengerId, pageable);
+  }
+
+  @Override
+  @Transactional
+  public PassangerResponseDTO update(Long id, Long passengerId,
+      PassangerRequestDTO requestDTO) {
+    log.info("Updating passenger with id {} by passenger id {}", id, passengerId);
+    Passenger passenger = findEntity(id);
+    ensurePassengerOwnership(passengerId, passenger);
+    ensureEmailAvailable(requestDTO.email(), id);
+    passengerMapper.updateEntity(passenger, requestDTO);
+    PassangerResponseDTO response = passengerMapper.toResponseDTO(passengerRepository.save(passenger));
+    log.info("Passenger updated with id {}", response.id());
+    return response;
   }
 
   @Override
@@ -94,10 +116,26 @@ public class PassengerServiceImpl implements PassengerService {
 
   @Override
   @Transactional
+  public void delete(Long id, Long passengerId) {
+    log.info("Deleting passenger with id {} by passenger id {}", id, passengerId);
+    Passenger passenger = findEntity(id);
+    ensurePassengerOwnership(passengerId, passenger);
+    passengerRepository.delete(passenger);
+    log.info("Passenger deleted with id {}", id);
+  }
+
+  @Override
+  @Transactional
   public void delete(Long id) {
     log.info("Deleting passenger with id {}", id);
     passengerRepository.delete(findEntity(id));
     log.info("Passenger deleted with id {}", id);
+  }
+
+  private void ensurePassengerOwnership(Long passengerId, Passenger passenger) {
+    if (!java.util.Objects.equals(passenger.getId(), passengerId)) {
+      throw new ForbiddenException("Passenger does not belong to passenger " + passengerId);
+    }
   }
 
   private Passenger findEntity(Long id) {

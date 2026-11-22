@@ -126,9 +126,20 @@ public class TripServiceImpl implements TripService {
   @Override
   @Transactional
   public TripResponseDTO update(Long id, TripRequestDTO requestDTO) {
+    return update(id, requestDTO.driverId(), requestDTO);
+  }
+
+  @Override
+  @Transactional
+  public TripResponseDTO update(Long id, Long driverId, TripRequestDTO requestDTO) {
     log.info("Updating trip with id {}", id);
     Trip trip = findEntity(id);
+    ensureTripOwnership(trip, driverId);
     Driver driver = findDriver(requestDTO.driverId());
+    if (!driver.getId().equals(driverId)) {
+      throw new ForbiddenException("NOT_OWNER",
+          "Trip does not belong to driver " + driverId);
+    }
     Vehicle vehicle = findVehicle(requestDTO.vehicleId());
     ensureVehicleOwnership(driver, vehicle);
     List<TripStopRequestDTO> stops = validateStops(requestDTO.stopPoints());
@@ -145,8 +156,17 @@ public class TripServiceImpl implements TripService {
   @Override
   @Transactional
   public void delete(Long id) {
+    Trip trip = findEntity(id);
+    delete(id, trip.getDriver().getId());
+  }
+
+  @Override
+  @Transactional
+  public void delete(Long id, Long driverId) {
     log.info("Deleting trip with id {}", id);
-    tripRepository.delete(findEntity(id));
+    Trip trip = findEntity(id);
+    ensureTripOwnership(trip, driverId);
+    tripRepository.delete(trip);
     log.info("Trip deleted with id {}", id);
   }
 
@@ -301,6 +321,13 @@ public class TripServiceImpl implements TripService {
     if (offeredSeats == null || offeredSeats < 1 || offeredSeats > capacity) {
       throw new BadRequestException("INVALID_OFFERED_SEATS",
           "Offered seats must be between 1 and " + capacity);
+    }
+  }
+
+  private void ensureTripOwnership(Trip trip, Long driverId) {
+    if (trip.getDriver() == null || !Objects.equals(trip.getDriver().getId(), driverId)) {
+      throw new ForbiddenException("NOT_OWNER",
+          "Trip does not belong to driver " + driverId);
     }
   }
 

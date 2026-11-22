@@ -22,9 +22,16 @@ public interface PassengerService {
 
   PassangerResponseDTO findByEmail(String email);
 
+  Page<ReservationResponseDTO> findReservationHistory(Long passengerId, Long requestingPassengerId,
+      Pageable pageable);
+
   Page<ReservationResponseDTO> findReservationHistory(Long passengerId, Pageable pageable);
 
+  PassangerResponseDTO update(Long id, Long passengerId, PassangerRequestDTO requestDTO);
+
   PassangerResponseDTO update(Long id, PassangerRequestDTO requestDTO);
+
+  void delete(Long id, Long passengerId);
 
   void delete(Long id);
 }

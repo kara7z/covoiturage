@@ -57,18 +57,21 @@ public class PassengerController {
   @GetMapping("/{id}/reservations")
   public Page<ReservationResponseDTO> findReservationHistory(
       @PathVariable Long id,
+      @RequestParam Long requestingPassengerId,
       @PageableDefault(size = 20, sort = "reservationDate", direction = Sort.Direction.DESC) Pageable pageable) {
-    return passengerService.findReservationHistory(id, pageable);
+    return passengerService.findReservationHistory(id, requestingPassengerId, pageable);
   }
 
   @PutMapping("/{id}")
-  public PassangerResponseDTO update(@PathVariable Long id, @Valid @RequestBody PassangerRequestDTO requestDTO) {
-    return passengerService.update(id, requestDTO);
+  public PassangerResponseDTO update(@PathVariable Long id,
+      @RequestParam Long passengerId,
+      @Valid @RequestBody PassangerRequestDTO requestDTO) {
+    return passengerService.update(id, passengerId, requestDTO);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void delete(@PathVariable Long id) {
-    passengerService.delete(id);
+  public void delete(@PathVariable Long id, @RequestParam Long passengerId) {
+    passengerService.delete(id, passengerId);
   }
 }

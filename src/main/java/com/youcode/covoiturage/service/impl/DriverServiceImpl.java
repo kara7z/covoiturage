@@ -9,6 +9,7 @@ import com.youcode.covoiturage.dto.DriverRequestDTO;
 import com.youcode.covoiturage.dto.DriverResponseDTO;
 import com.youcode.covoiturage.entity.Driver;
 import com.youcode.covoiturage.exception.AlreadyExistsException;
+import com.youcode.covoiturage.exception.ForbiddenException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.DriverMapper;
 import com.youcode.covoiturage.repository.DriverRepository;
@@ -67,6 +68,20 @@ public class DriverServiceImpl implements DriverService {
 
   @Override
   @Transactional
+  public DriverResponseDTO update(Long id, Long driverId, DriverRequestDTO requestDTO) {
+    log.info("Updating driver with id {} by driver id {}", id, driverId);
+    Driver driver = findEntity(id);
+    ensureDriverOwnership(driverId, driver);
+    ensureEmailAvailable(requestDTO.email(), id);
+    ensureLicenseNumberAvailable(requestDTO.licenseNumber(), id);
+    driverMapper.updateEntity(driver, requestDTO);
+    DriverResponseDTO response = driverMapper.toResponseDTO(driverRepository.save(driver));
+    log.info("Driver updated with id {}", response.id());
+    return response;
+  }
+
+  @Override
+  @Transactional
   public DriverResponseDTO update(Long id, DriverRequestDTO requestDTO) {
     log.info("Updating driver with id {}", id);
     Driver driver = findEntity(id);
@@ -80,10 +95,26 @@ public class DriverServiceImpl implements DriverService {
 
   @Override
   @Transactional
+  public void delete(Long id, Long driverId) {
+    log.info("Deleting driver with id {} by driver id {}", id, driverId);
+    Driver driver = findEntity(id);
+    ensureDriverOwnership(driverId, driver);
+    driverRepository.delete(driver);
+    log.info("Driver deleted with id {}", id);
+  }
+
+  @Override
+  @Transactional
   public void delete(Long id) {
     log.info("Deleting driver with id {}", id);
     driverRepository.delete(findEntity(id));
     log.info("Driver deleted with id {}", id);
+  }
+
+  private void ensureDriverOwnership(Long driverId, Driver driver) {
+    if (!java.util.Objects.equals(driver.getId(), driverId)) {
+      throw new ForbiddenException("Driver does not belong to driver " + driverId);
+    }
   }
 
   private Driver findEntity(Long id) {
