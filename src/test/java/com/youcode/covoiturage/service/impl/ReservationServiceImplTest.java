@@ -21,10 +21,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.youcode.covoiturage.dto.ReservationRequestDTO;
 import com.youcode.covoiturage.dto.ReservationResponseDTO;
+import com.youcode.covoiturage.entity.Driver;
 import com.youcode.covoiturage.entity.Passenger;
 import com.youcode.covoiturage.entity.Reservation;
 import com.youcode.covoiturage.entity.StopPoint;
 import com.youcode.covoiturage.entity.Trip;
+import com.youcode.covoiturage.entity.Vehicle;
 import com.youcode.covoiturage.enums.ReservationStatus;
 import com.youcode.covoiturage.enums.TripStatus;
 import com.youcode.covoiturage.exception.BadRequestException;
@@ -286,8 +288,8 @@ class ReservationServiceImplTest {
     return reservation;
   }
 
-  private com.youcode.covoiturage.entity.Driver driver(Long id) {
-    com.youcode.covoiturage.entity.Driver driver = com.youcode.covoiturage.entity.Driver.builder()
+  private Driver driver(Long id) {
+    Driver driver = Driver.builder()
         .firstName("Hamid")
         .lastName("El Amrani")
         .email("hamid@example.com")
@@ -298,9 +300,9 @@ class ReservationServiceImplTest {
     return driver;
   }
 
-  private com.youcode.covoiturage.entity.Vehicle vehicle(Long id,
-      com.youcode.covoiturage.entity.Driver driver, int capacity) {
-    com.youcode.covoiturage.entity.Vehicle vehicle = com.youcode.covoiturage.entity.Vehicle.builder()
+  private Vehicle vehicle(Long id,
+      Driver driver, int capacity) {
+    Vehicle vehicle = Vehicle.builder()
         .brand("Dacia")
         .model("Logan")
         .licensePlate("12345-A-6")
