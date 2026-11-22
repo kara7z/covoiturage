@@ -95,8 +95,8 @@ class VehicleServiceImplTest {
 
   @Test
   void delete_rejectsVehicleLinkedToTrip() {
-    Driver owner = Driver.builder().firstName("Owner").lastName("Driver").email("owner@example.com")
-        .phone("000").licenseNumber("LIC").build();
+    Driver owner = org.mockito.Mockito.mock(Driver.class);
+    when(owner.getId()).thenReturn(1L);
     Vehicle vehicle = Vehicle.builder().driver(owner).build();
     when(vehicleRepository.findById(10L)).thenReturn(Optional.of(vehicle));
     when(tripRepository.existsByVehicleId(10L)).thenReturn(true);

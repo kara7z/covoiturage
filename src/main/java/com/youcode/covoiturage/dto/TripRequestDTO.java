@@ -1,11 +1,9 @@
 package com.youcode.covoiturage.dto;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-import com.youcode.covoiturage.enums.TripStatus;
-
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -17,13 +15,7 @@ public record TripRequestDTO(
 
     @NotNull(message = "Vehicle id is required") Long vehicleId,
 
-    @NotBlank(message = "Departure city is required") @Size(max = 100, message = "Departure city must not exceed 100 characters") String departureCity,
-
-    @NotBlank(message = "Arrival city is required") @Size(max = 100, message = "Arrival city must not exceed 100 characters") String arrivalCity,
-
-    @NotNull(message = "Departure date is required") LocalDateTime departureDate,
-
     @NotNull(message = "Offered seats is required") @Min(value = 1, message = "Offered seats must be at least 1") Integer offeredSeats,
 
-    @NotNull(message = "Status is required") TripStatus status) {
+    @NotNull(message = "Stop points are required") @Size(min = 2, message = "A trip must have at least two stops") @Valid List<TripStopRequestDTO> stopPoints) {
 }

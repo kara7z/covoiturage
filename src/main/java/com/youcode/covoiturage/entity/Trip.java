@@ -121,20 +121,25 @@ public class Trip {
         Comparator.nullsLast(Integer::compareTo)));
 
     for (int i = 0; i < stopPoints.size(); i++) {
-      Integer order = stopPoints.get(i).getStopOrder();
+      StopPoint current = stopPoints.get(i);
+      Integer order = current.getStopOrder();
       if (order == null || order != i)
         throw new IllegalStateException("Trip stop orders must start at 0 and be contiguous");
 
-      if (i > 0) {
-        StopPoint previous = stopPoints.get(i - 1);
-        StopPoint current = stopPoints.get(i);
-        if (previous.getPassingTime() != null && current.getPassingTime() != null
-            && current.getPassingTime().isBefore(previous.getPassingTime()))
-          throw new IllegalStateException("Stop times must follow the stop order");
-        if (previous.getPriceFromDeparture() != null && current.getPriceFromDeparture() != null
-            && current.getPriceFromDeparture().compareTo(previous.getPriceFromDeparture()) < 0)
-          throw new IllegalStateException("Cumulative stop prices must not decrease");
+      if (i == 0) {
+        if (current.getPriceFromDeparture() != null
+            && current.getPriceFromDeparture().signum() != 0)
+          throw new IllegalStateException("Price from departure must be 0 at the first stop");
+        continue;
       }
+
+      StopPoint previous = stopPoints.get(i - 1);
+      if (previous.getPassingTime() != null && current.getPassingTime() != null
+          && !current.getPassingTime().isAfter(previous.getPassingTime()))
+        throw new IllegalStateException("Stop times must strictly follow the stop order");
+      if (previous.getPriceFromDeparture() != null && current.getPriceFromDeparture() != null
+          && current.getPriceFromDeparture().compareTo(previous.getPriceFromDeparture()) <= 0)
+        throw new IllegalStateException("Cumulative stop prices must strictly increase");
     }
   }
 
