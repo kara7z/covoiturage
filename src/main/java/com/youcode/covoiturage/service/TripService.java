@@ -30,7 +30,11 @@ public interface TripService {
 
   TripResponseDTO update(Long id, TripRequestDTO requestDTO);
 
+  TripResponseDTO update(Long id, Long driverId, TripRequestDTO requestDTO);
+
   void delete(Long id);
+
+  void delete(Long id, Long driverId);
 
   void cancel(Long id, Long driverId);
 

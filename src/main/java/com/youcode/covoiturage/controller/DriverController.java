@@ -50,13 +50,15 @@ public class DriverController {
   }
 
   @PutMapping("/{id}")
-  public DriverResponseDTO update(@PathVariable Long id, @Valid @RequestBody DriverRequestDTO requestDTO) {
-    return driverService.update(id, requestDTO);
+  public DriverResponseDTO update(@PathVariable Long id,
+      @RequestParam Long driverId,
+      @Valid @RequestBody DriverRequestDTO requestDTO) {
+    return driverService.update(id, driverId, requestDTO);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void delete(@PathVariable Long id) {
-    driverService.delete(id);
+  public void delete(@PathVariable Long id, @RequestParam Long driverId) {
+    driverService.delete(id, driverId);
   }
 }

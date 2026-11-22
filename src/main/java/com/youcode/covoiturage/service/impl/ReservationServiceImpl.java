@@ -139,8 +139,19 @@ public class ReservationServiceImpl implements ReservationService {
   @Override
   @Transactional
   public ReservationResponseDTO update(Long id, ReservationRequestDTO requestDTO) {
+    return update(id, requestDTO.passengerId(), requestDTO);
+  }
+
+  @Override
+  @Transactional
+  public ReservationResponseDTO update(Long id, Long passengerId, ReservationRequestDTO requestDTO) {
     log.info("Updating reservation with id {}", id);
     Reservation reservation = findEntity(id);
+    ensureReservationOwnership(reservation, passengerId);
+    if (!passengerId.equals(requestDTO.passengerId())) {
+      throw new ForbiddenException("NOT_OWNER",
+          "Reservation does not belong to passenger " + passengerId);
+    }
     Passenger passenger = findPassenger(requestDTO.passengerId());
     Trip trip = findTrip(requestDTO.tripId());
     reservationMapper.updateEntity(reservation, requestDTO, passenger, trip);
@@ -152,8 +163,17 @@ public class ReservationServiceImpl implements ReservationService {
   @Override
   @Transactional
   public void delete(Long id) {
+    Reservation reservation = findEntity(id);
+    delete(id, reservation.getPassenger().getId());
+  }
+
+  @Override
+  @Transactional
+  public void delete(Long id, Long passengerId) {
     log.info("Deleting reservation with id {}", id);
-    reservationRepository.delete(findEntity(id));
+    Reservation reservation = findEntity(id);
+    ensureReservationOwnership(reservation, passengerId);
+    reservationRepository.delete(reservation);
     log.info("Reservation deleted with id {}", id);
   }
 
@@ -163,6 +183,14 @@ public class ReservationServiceImpl implements ReservationService {
           log.warn("Reservation not found with id {}", id);
           return new ResourceNotFoundException("Reservation not found with id " + id);
         });
+  }
+
+  private void ensureReservationOwnership(Reservation reservation, Long passengerId) {
+    if (reservation.getPassenger() == null
+        || !java.util.Objects.equals(reservation.getPassenger().getId(), passengerId)) {
+      throw new ForbiddenException("NOT_OWNER",
+          "Reservation does not belong to passenger " + passengerId);
+    }
   }
 
   private Passenger findPassenger(Long id) {
