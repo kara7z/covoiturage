@@ -1,6 +1,7 @@
 package com.youcode.covoiturage.service.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -8,11 +9,16 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.youcode.covoiturage.dto.TripDetailResponseDTO;
 import com.youcode.covoiturage.dto.TripRequestDTO;
 import com.youcode.covoiturage.dto.TripResponseDTO;
+import com.youcode.covoiturage.dto.TripSearchResponseDTO;
 import com.youcode.covoiturage.dto.TripStopRequestDTO;
 import com.youcode.covoiturage.entity.Driver;
 import com.youcode.covoiturage.entity.StopPoint;
@@ -25,6 +31,7 @@ import com.youcode.covoiturage.exception.ForbiddenException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.TripMapper;
 import com.youcode.covoiturage.repository.DriverRepository;
+import com.youcode.covoiturage.repository.ReservationRepository;
 import com.youcode.covoiturage.repository.TripRepository;
 import com.youcode.covoiturage.repository.VehicleRepository;
 import com.youcode.covoiturage.service.TripService;
@@ -44,6 +51,7 @@ public class TripServiceImpl implements TripService {
   private final TripRepository tripRepository;
   private final DriverRepository driverRepository;
   private final VehicleRepository vehicleRepository;
+  private final ReservationRepository reservationRepository;
   private final TripMapper tripMapper;
 
   @Override
@@ -68,6 +76,41 @@ public class TripServiceImpl implements TripService {
   public TripResponseDTO findById(Long id) {
     log.debug("Fetching trip with id {}", id);
     return tripMapper.toResponseDTO(findEntity(id));
+  }
+
+  @Override
+  public TripDetailResponseDTO findDetail(Long id) {
+    log.debug("Fetching trip detail with id {}", id);
+    Trip trip = tripRepository.findDetailById(id)
+        .orElseThrow(() -> {
+          log.warn("Trip not found with id {}", id);
+          return new ResourceNotFoundException("Trip not found with id " + id);
+        });
+    long confirmedSeats = reservationRepository.sumConfirmedSeatsByTripId(id);
+    long remainingSeats = Math.max(trip.getOfferedSeats() - confirmedSeats, 0);
+    return tripMapper.toDetailResponseDTO(trip, remainingSeats);
+  }
+
+  @Override
+  public Page<TripSearchResponseDTO> search(String departureCity, String arrivalCity,
+      LocalDate date, BigDecimal maxPrice, Pageable pageable) {
+    String departure = requireCity(departureCity, "Departure city");
+    String arrival = requireCity(arrivalCity, "Arrival city");
+    if (departure.equalsIgnoreCase(arrival)) {
+      throw new BadRequestException("INVALID_SEARCH", "Departure and arrival cities must differ");
+    }
+    if (maxPrice != null && maxPrice.signum() < 0) {
+      throw new BadRequestException("INVALID_MAX_PRICE", "Maximum price must not be negative");
+    }
+    if (pageable.getPageNumber() < 0 || pageable.getPageSize() < 1) {
+      throw new BadRequestException("INVALID_PAGINATION", "Page must be 0 or more and size at least 1");
+    }
+
+    Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), Math.min(pageable.getPageSize(), 50));
+    LocalDateTime dayStart = date == null ? null : date.atStartOfDay();
+    LocalDateTime dayEnd = date == null ? null : date.plusDays(1).atStartOfDay();
+    log.debug("Searching trips from {} to {} on {} with max price {}", departure, arrival, date, maxPrice);
+    return tripRepository.search(departure, arrival, dayStart, dayEnd, maxPrice, pageRequest);
   }
 
   @Override
@@ -170,6 +213,13 @@ public class TripServiceImpl implements TripService {
       throw new BadRequestException("INVALID_TRIP_STOPS", "Each stop must define a city");
     }
     return new TripStopRequestDTO(stop.city().trim(), stop.passingTime(), stop.priceFromDeparture());
+  }
+
+  private String requireCity(String city, String label) {
+    if (city == null || city.isBlank()) {
+      throw new BadRequestException("INVALID_SEARCH", label + " is required");
+    }
+    return city.trim();
   }
 
   private void ensureVehicleOwnership(Driver driver, Vehicle vehicle) {

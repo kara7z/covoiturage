@@ -18,10 +18,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.youcode.covoiturage.dto.TripDetailResponseDTO;
 import com.youcode.covoiturage.dto.TripRequestDTO;
 import com.youcode.covoiturage.dto.TripResponseDTO;
+import com.youcode.covoiturage.dto.TripSearchResponseDTO;
 import com.youcode.covoiturage.dto.TripStopRequestDTO;
 import com.youcode.covoiturage.entity.Driver;
 import com.youcode.covoiturage.entity.StopPoint;
@@ -31,8 +36,10 @@ import com.youcode.covoiturage.enums.TripStatus;
 import com.youcode.covoiturage.exception.BadRequestException;
 import com.youcode.covoiturage.exception.BusinessRuleException;
 import com.youcode.covoiturage.exception.ForbiddenException;
+import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.TripMapper;
 import com.youcode.covoiturage.repository.DriverRepository;
+import com.youcode.covoiturage.repository.ReservationRepository;
 import com.youcode.covoiturage.repository.TripRepository;
 import com.youcode.covoiturage.repository.VehicleRepository;
 
@@ -49,6 +56,9 @@ class TripServiceImplTest {
 
   @Mock
   private VehicleRepository vehicleRepository;
+
+  @Mock
+  private ReservationRepository reservationRepository;
 
   @Mock
   private TripMapper tripMapper;
@@ -194,6 +204,63 @@ class TripServiceImplTest {
         .isInstanceOf(ForbiddenException.class)
         .hasMessage("Vehicle does not belong to driver 1");
     verify(tripRepository, never()).save(any());
+  }
+
+  @Test
+  void findDetail_returnsRemainingSeatsFromConfirmedReservations() {
+    Driver driver = driver(1L);
+    Vehicle vehicle = vehicle(2L, driver, 4);
+    Trip trip = Trip.builder()
+        .driver(driver)
+        .vehicle(vehicle)
+        .departureCity("Rabat")
+        .arrivalCity("Marrakech")
+        .departureDate(DEPARTURE)
+        .offeredSeats(3)
+        .status(TripStatus.PUBLISHED)
+        .build();
+    TripDetailResponseDTO expected = new TripDetailResponseDTO(10L, 1L, "Hamid El Amrani",
+        2L, "Dacia", "Logan", "Rabat", "Marrakech", DEPARTURE, 3, 1L, TripStatus.PUBLISHED,
+        List.of());
+    when(tripRepository.findDetailById(10L)).thenReturn(Optional.of(trip));
+    when(reservationRepository.sumConfirmedSeatsByTripId(10L)).thenReturn(2L);
+    when(tripMapper.toDetailResponseDTO(trip, 1L)).thenReturn(expected);
+
+    assertThat(tripService.findDetail(10L)).isSameAs(expected);
+  }
+
+  @Test
+  void findDetail_rejectsUnknownTrip() {
+    when(tripRepository.findDetailById(99L)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> tripService.findDetail(99L))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Trip not found with id 99");
+  }
+
+  @Test
+  void search_rejectsIdenticalDepartureAndArrivalCities() {
+    assertThatThrownBy(() -> tripService.search("Rabat", "rabat", null, null, PageRequest.of(0, 10)))
+        .isInstanceOf(BadRequestException.class)
+        .hasMessage("Departure and arrival cities must differ");
+  }
+
+  @Test
+  void search_rejectsNegativeMaxPrice() {
+    assertThatThrownBy(() -> tripService.search("Rabat", "Marrakech", null, new BigDecimal("-1"),
+        PageRequest.of(0, 10)))
+        .isInstanceOf(BadRequestException.class)
+        .hasMessage("Maximum price must not be negative");
+  }
+
+  @Test
+  void search_trimsCitiesAndCapsThePageSize() {
+    Page<TripSearchResponseDTO> page = new PageImpl<>(List.of());
+    when(tripRepository.search("Rabat", "Marrakech", null, null, null, PageRequest.of(0, 50)))
+        .thenReturn(page);
+
+    assertThat(tripService.search(" Rabat ", "Marrakech", null, null, PageRequest.of(0, 100)))
+        .isSameAs(page);
   }
 
   private void givenOwnedVehicle(Driver driver, Vehicle vehicle) {
