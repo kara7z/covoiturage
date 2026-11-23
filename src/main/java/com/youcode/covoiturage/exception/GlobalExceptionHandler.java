@@ -25,17 +25,17 @@ public class GlobalExceptionHandler {
   private static final String TYPE_PREFIX = "https://api.covoiturage.local/problems/";
 
   @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<ProblemDetail> handleBusiness(BusinessException ex, HttpServletRequest request) {
-    log.warn("Business error [{}]: {}", ex.getErrorCode(), ex.getMessage());
-    return ResponseEntity.status(ex.getHttpStatus())
-        .body(buildProblem(ex.getHttpStatus(), ex.getErrorCode(), ex.getMessage(), request));
+  public ResponseEntity<ProblemDetail> handleBusiness(BusinessException exception, HttpServletRequest request) {
+    log.warn("Business error [{}]: {}", exception.getErrorCode(), exception.getMessage());
+    return ResponseEntity.status(exception.getHttpStatus())
+        .body(buildProblem(exception.getHttpStatus(), exception.getErrorCode(), exception.getMessage(), request));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex,
+  public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException exception,
       HttpServletRequest request) {
     Map<String, String> errors = new LinkedHashMap<>();
-    for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+    for (FieldError error : exception.getBindingResult().getFieldErrors()) {
       errors.put(error.getField(), error.getDefaultMessage());
     }
 
@@ -46,23 +46,23 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ProblemDetail> handleConstraint(ConstraintViolationException ex,
+  public ResponseEntity<ProblemDetail> handleConstraint(ConstraintViolationException exception,
       HttpServletRequest request) {
-    log.warn("Constraint violation: {}", ex.getMessage());
+    log.warn("Constraint violation: {}", exception.getMessage());
     return ResponseEntity.badRequest()
-        .body(buildProblem(HttpStatus.BAD_REQUEST, "CONSTRAINT_VIOLATION", ex.getMessage(), request));
+        .body(buildProblem(HttpStatus.BAD_REQUEST, "CONSTRAINT_VIOLATION", exception.getMessage(), request));
   }
 
   @ExceptionHandler(NoHandlerFoundException.class)
-  public ResponseEntity<ProblemDetail> handleNoHandler(NoHandlerFoundException ex,
+  public ResponseEntity<ProblemDetail> handleNoHandler(NoHandlerFoundException exception,
       HttpServletRequest request) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(buildProblem(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", "Endpoint not found", request));
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<ProblemDetail> handleGeneric(Exception ex, HttpServletRequest request) {
-    log.error("Unexpected error", ex);
+  public ResponseEntity<ProblemDetail> handleGeneric(Exception exception, HttpServletRequest request) {
+    log.error("Unexpected error", exception);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(buildProblem(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Something went wrong", request));
   }

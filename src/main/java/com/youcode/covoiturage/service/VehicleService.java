@@ -10,13 +10,13 @@ import com.youcode.covoiturage.dto.VehicleResponseDTO;
  */
 public interface VehicleService {
 
-  VehicleResponseDTO create(VehicleRequestDTO requestDTO);
+  VehicleResponseDTO create(Long driverId, VehicleRequestDTO requestDTO);
 
-  VehicleResponseDTO findById(Long id);
+  VehicleResponseDTO findById(Long driverId, Long id);
 
-  List<VehicleResponseDTO> findAll();
+  List<VehicleResponseDTO> findByDriverId(Long driverId);
 
-  VehicleResponseDTO update(Long id, VehicleRequestDTO requestDTO);
+  VehicleResponseDTO update(Long driverId, Long id, VehicleRequestDTO requestDTO);
 
-  void delete(Long id);
+  void delete(Long driverId, Long id);
 }
