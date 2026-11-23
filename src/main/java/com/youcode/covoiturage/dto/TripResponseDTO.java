@@ -1,6 +1,7 @@
 package com.youcode.covoiturage.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.youcode.covoiturage.enums.TripStatus;
 
@@ -15,5 +16,6 @@ public record TripResponseDTO(
     String arrivalCity,
     LocalDateTime departureDate,
     Integer offeredSeats,
-    TripStatus status) {
+    TripStatus status,
+    List<StopPointResponseDTO> stopPoints) {
 }

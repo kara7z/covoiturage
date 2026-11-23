@@ -2,15 +2,24 @@ package com.youcode.covoiturage.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.youcode.covoiturage.dto.PassangerRequestDTO;
 import com.youcode.covoiturage.dto.PassangerResponseDTO;
+import com.youcode.covoiturage.dto.ReservationResponseDTO;
 import com.youcode.covoiturage.entity.Passenger;
+import com.youcode.covoiturage.exception.AlreadyExistsException;
+import com.youcode.covoiturage.exception.ForbiddenException;
 import com.youcode.covoiturage.exception.ResourceNotFoundException;
 import com.youcode.covoiturage.mapper.PassengerMapper;
+import com.youcode.covoiturage.mapper.ReservationMapper;
 import com.youcode.covoiturage.repository.PassengerRepository;
+import com.youcode.covoiturage.repository.ReservationRepository;
 import com.youcode.covoiturage.service.PassengerService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,11 +36,14 @@ public class PassengerServiceImpl implements PassengerService {
 
   private final PassengerRepository passengerRepository;
   private final PassengerMapper passengerMapper;
+  private final ReservationRepository reservationRepository;
+  private final ReservationMapper reservationMapper;
 
   @Override
   @Transactional
   public PassangerResponseDTO create(PassangerRequestDTO requestDTO) {
     log.info("Creating passenger with email {}", requestDTO.email());
+    ensureEmailAvailable(requestDTO.email(), null);
     Passenger passenger = passengerMapper.toEntity(requestDTO);
     PassangerResponseDTO response = passengerMapper.toResponseDTO(passengerRepository.save(passenger));
     log.info("Passenger created with id {}", response.id());
@@ -53,14 +65,63 @@ public class PassengerServiceImpl implements PassengerService {
   }
 
   @Override
+  public PassangerResponseDTO findByEmail(String email) {
+    log.debug("Fetching passenger with email {}", email);
+    return passengerRepository.findByEmail(email)
+        .map(passengerMapper::toResponseDTO)
+        .orElseThrow(() -> new ResourceNotFoundException("Passenger not found with email " + email));
+  }
+
+  @Override
+  public Page<ReservationResponseDTO> findReservationHistory(Long passengerId,
+      Long requestingPassengerId, Pageable pageable) {
+    Passenger passenger = findEntity(passengerId);
+    ensurePassengerOwnership(requestingPassengerId, passenger);
+    Pageable dateSortedPage = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+        Sort.by(Sort.Direction.DESC, "reservationDate"));
+    return reservationRepository.findByPassengerId(passengerId, dateSortedPage)
+        .map(reservationMapper::toResponseDTO);
+  }
+
+  @Override
+  public Page<ReservationResponseDTO> findReservationHistory(Long passengerId, Pageable pageable) {
+    return findReservationHistory(passengerId, passengerId, pageable);
+  }
+
+  @Override
   @Transactional
-  public PassangerResponseDTO update(Long id, PassangerRequestDTO requestDTO) {
-    log.info("Updating passenger with id {}", id);
+  public PassangerResponseDTO update(Long id, Long passengerId,
+      PassangerRequestDTO requestDTO) {
+    log.info("Updating passenger with id {} by passenger id {}", id, passengerId);
     Passenger passenger = findEntity(id);
+    ensurePassengerOwnership(passengerId, passenger);
+    ensureEmailAvailable(requestDTO.email(), id);
     passengerMapper.updateEntity(passenger, requestDTO);
     PassangerResponseDTO response = passengerMapper.toResponseDTO(passengerRepository.save(passenger));
     log.info("Passenger updated with id {}", response.id());
     return response;
+  }
+
+  @Override
+  @Transactional
+  public PassangerResponseDTO update(Long id, PassangerRequestDTO requestDTO) {
+    log.info("Updating passenger with id {}", id);
+    Passenger passenger = findEntity(id);
+    ensureEmailAvailable(requestDTO.email(), id);
+    passengerMapper.updateEntity(passenger, requestDTO);
+    PassangerResponseDTO response = passengerMapper.toResponseDTO(passengerRepository.save(passenger));
+    log.info("Passenger updated with id {}", response.id());
+    return response;
+  }
+
+  @Override
+  @Transactional
+  public void delete(Long id, Long passengerId) {
+    log.info("Deleting passenger with id {} by passenger id {}", id, passengerId);
+    Passenger passenger = findEntity(id);
+    ensurePassengerOwnership(passengerId, passenger);
+    passengerRepository.delete(passenger);
+    log.info("Passenger deleted with id {}", id);
   }
 
   @Override
@@ -71,11 +132,27 @@ public class PassengerServiceImpl implements PassengerService {
     log.info("Passenger deleted with id {}", id);
   }
 
+  private void ensurePassengerOwnership(Long passengerId, Passenger passenger) {
+    if (!java.util.Objects.equals(passenger.getId(), passengerId)) {
+      throw new ForbiddenException("Passenger does not belong to passenger " + passengerId);
+    }
+  }
+
   private Passenger findEntity(Long id) {
     return passengerRepository.findById(id)
         .orElseThrow(() -> {
           log.warn("Passenger not found with id {}", id);
           return new ResourceNotFoundException("Passenger not found with id " + id);
         });
+  }
+
+  private void ensureEmailAvailable(String email, Long currentId) {
+    boolean exists = currentId == null
+        ? passengerRepository.existsByEmail(email)
+        : passengerRepository.existsByEmailAndIdNot(email, currentId);
+    if (exists) {
+      log.warn("Passenger email already in use: {}", email);
+      throw new AlreadyExistsException("Passenger with email " + email + " already exists");
+    }
   }
 }

@@ -17,7 +17,7 @@ public record StopPointRequestDTO(
 
     @NotBlank(message = "City is required") @Size(max = 100, message = "City must not exceed 100 characters") String city,
 
-    @NotNull(message = "Stop order is required") @Min(value = 1, message = "Stop order must be at least 1") Integer stopOrder,
+    @NotNull(message = "Stop order is required") @Min(value = 0, message = "Stop order must not be negative") Integer stopOrder,
 
     @NotNull(message = "Passing time is required") LocalDateTime passingTime,
 
