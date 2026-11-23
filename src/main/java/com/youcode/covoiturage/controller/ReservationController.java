@@ -1,7 +1,10 @@
 package com.youcode.covoiturage.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +34,11 @@ public class ReservationController {
   public ResponseEntity<ReservationResponseDTO> create(
       @Valid @RequestBody ReservationRequestDTO requestDTO) {
     return ResponseEntity.status(HttpStatus.CREATED).body(reservationService.create(requestDTO));
+  }
+
+  @GetMapping
+  public List<ReservationResponseDTO> findAll() {
+    return reservationService.findAll();
   }
 
   @PatchMapping("/{id}/cancel")

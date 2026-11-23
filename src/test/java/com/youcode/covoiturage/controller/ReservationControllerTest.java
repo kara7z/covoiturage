@@ -2,12 +2,14 @@ package com.youcode.covoiturage.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,5 +68,20 @@ class ReservationControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content("{\"passengerId\":null,\"tripId\":100}"))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void findAll_returnsReservations() throws Exception {
+    ReservationResponseDTO response = new ReservationResponseDTO(
+        10L, 1L, 100L, "Rabat", "Marrakech", 2,
+        new BigDecimal("160.00"), NOW, ReservationStatus.CONFIRMED);
+    when(reservationService.findAll()).thenReturn(List.of(response));
+
+    mockMvc.perform(get("/api/reservations"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(10))
+        .andExpect(jsonPath("$[0].passengerId").value(1))
+        .andExpect(jsonPath("$[0].status").value("CONFIRMED"));
   }
 }

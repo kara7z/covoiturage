@@ -17,20 +17,29 @@ import com.youcode.covoiturage.enums.ReservationStatus;
  */
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
+  boolean existsByPassengerIdAndTripId(Long passengerId, Long tripId);
+
+  Optional<Reservation> findFirstByPassengerIdAndTripId(Long passengerId, Long tripId);
+
   Page<Reservation> findByPassengerId(Long passengerId, Pageable pageable);
 
   @Query("""
       select coalesce(sum(r.numberOfSeats), 0) from Reservation r
       where r.trip.id = :tripId
-        and r.status = com.youcode.covoiturage.enums.ReservationStatus.CONFIRMED
+        and r.status = :status
       """)
-  Long sumConfirmedSeatsByTripId(@Param("tripId") Long tripId);
+  Long sumConfirmedSeatsByTripId(
+      @Param("tripId") Long tripId, @Param("status") ReservationStatus status);
+
+  default Long sumConfirmedSeatsByTripId(Long tripId) {
+    return sumConfirmedSeatsByTripId(tripId, ReservationStatus.CONFIRMED);
+  }
 
   @Query("""
       select count(r) > 0 from Reservation r
       where r.passenger.id = :passengerId
         and r.trip.id = :tripId
-        and r.status = com.youcode.covoiturage.enums.ReservationStatus.CONFIRMED
+        and r.status = :status
       """)
   boolean existsByPassengerIdAndTripIdAndStatus(
       @Param("passengerId") Long passengerId,
@@ -47,8 +56,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
   @Query("""
       select r from Reservation r
       where r.trip.id = :tripId
-        and r.status = com.youcode.covoiturage.enums.ReservationStatus.CONFIRMED
+        and r.status = :status
       """)
-  List<Reservation> findConfirmedByTripId(@Param("tripId") Long tripId);
+  List<Reservation> findConfirmedByTripId(
+      @Param("tripId") Long tripId, @Param("status") ReservationStatus status);
+
+  default List<Reservation> findConfirmedByTripId(Long tripId) {
+    return findConfirmedByTripId(tripId, ReservationStatus.CONFIRMED);
+  }
 
 }
