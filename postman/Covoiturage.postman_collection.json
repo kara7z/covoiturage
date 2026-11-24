@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "71e61574-c942-4d76-a6e9-1df4dc53df83",
-    "name": "Covoiturage",
-    "description": "CRUD requests for every controller API. Run requests from top to bottom against a clean dev-seeded database. The seed creates five rows per main table, so new test records use ID 6. If your database contains other data, change the IDs in the request URLs and bodies.",
+    "name": "Covoiturage API",
+    "description": "Manual API requests with editable examples and no variables or scripts. Replace each example ID of 0 with a real ID from a create response or a list result. Match owner IDs in the URL, Params, and Body where required. Use unique emails, driver license numbers, and vehicle plates for repeated creates. Cleanup is optional and deletes the records whose IDs you enter. Use Validation Scenarios for the numbered checks from the project brief.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -21,7 +21,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Driver\",\n  \"email\": \"postman.driver@example.com\",\n  \"phone\": \"0600000091\",\n  \"licenseNumber\": \"PM-DRIVER-001\"\n}"
+              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Driver\",\n  \"email\": \"driver@example.com\",\n  \"phone\": \"0600000091\",\n  \"licenseNumber\": \"DL-EXAMPLE-001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:8081/api/drivers",
@@ -35,10 +40,11 @@
                 "drivers"
               ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "Get all drivers",
+          "name": "List drivers",
           "request": {
             "method": "GET",
             "header": [],
@@ -54,15 +60,16 @@
                 "drivers"
               ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "Get created driver",
+          "name": "Get driver",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/drivers/6",
+              "raw": "http://localhost:8081/api/drivers/0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -71,13 +78,15 @@
               "path": [
                 "api",
                 "drivers",
-                "6"
+                "0"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Search for created driver",
+          "name": "Search drivers",
           "request": {
             "method": "GET",
             "header": [],
@@ -96,14 +105,16 @@
               "query": [
                 {
                   "key": "query",
-                  "value": "Postman"
+                  "value": "Postman",
+                  "description": "Search text."
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "Update created driver",
+          "name": "Update driver",
           "request": {
             "method": "PUT",
             "header": [
@@ -114,10 +125,15 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Driver Updated\",\n  \"email\": \"postman.driver@example.com\",\n  \"phone\": \"0600000092\",\n  \"licenseNumber\": \"PM-DRIVER-001\"\n}"
+              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Driver Updated\",\n  \"email\": \"driver@example.com\",\n  \"phone\": \"0600000091\",\n  \"licenseNumber\": \"DL-EXAMPLE-001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "http://localhost:8081/api/drivers/6?driverId=6",
+              "raw": "http://localhost:8081/api/drivers/0?driverId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -126,42 +142,19 @@
               "path": [
                 "api",
                 "drivers",
-                "6"
+                "0"
               ],
               "query": [
                 {
                   "key": "driverId",
-                  "value": "6"
+                  "value": "0",
+                  "description": "ID of the driver who owns this record."
                 }
               ]
-            }
-          }
-        },
-        {
-          "name": "Delete created driver",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/drivers/6?driverId=6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8081",
-              "path": [
-                "api",
-                "drivers",
-                "6"
-              ],
-              "query": [
-                {
-                  "key": "driverId",
-                  "value": "6"
-                }
-              ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         }
       ]
     },
@@ -180,7 +173,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Passenger\",\n  \"email\": \"postman.passenger@example.com\",\n  \"phone\": \"0610000091\"\n}"
+              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Passenger\",\n  \"email\": \"passenger@example.com\",\n  \"phone\": \"0610000091\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:8081/api/passengers",
@@ -194,10 +192,11 @@
                 "passengers"
               ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "Get all passengers",
+          "name": "List passengers",
           "request": {
             "method": "GET",
             "header": [],
@@ -213,15 +212,16 @@
                 "passengers"
               ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "Get created passenger",
+          "name": "Get passenger",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/passengers/6",
+              "raw": "http://localhost:8081/api/passengers/0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -230,18 +230,20 @@
               "path": [
                 "api",
                 "passengers",
-                "6"
+                "0"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Search passenger by email",
+          "name": "Find passenger by email",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/passengers/search?email=postman.passenger%40example.com",
+              "raw": "http://localhost:8081/api/passengers/search?email=passenger@example.com",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -255,41 +257,16 @@
               "query": [
                 {
                   "key": "email",
-                  "value": "postman.passenger@example.com"
+                  "value": "passenger@example.com",
+                  "description": "Email address to look up."
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "Get created passenger reservation history",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/passengers/6/reservations?requestingPassengerId=6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8081",
-              "path": [
-                "api",
-                "passengers",
-                "6",
-                "reservations"
-              ],
-              "query": [
-                {
-                  "key": "requestingPassengerId",
-                  "value": "6"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Update created passenger",
+          "name": "Update passenger",
           "request": {
             "method": "PUT",
             "header": [
@@ -300,10 +277,15 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Passenger Updated\",\n  \"email\": \"postman.passenger@example.com\",\n  \"phone\": \"0610000092\"\n}"
+              "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"Passenger Updated\",\n  \"email\": \"passenger@example.com\",\n  \"phone\": \"0610000091\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "http://localhost:8081/api/passengers/6?passengerId=6",
+              "raw": "http://localhost:8081/api/passengers/0?passengerId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -312,42 +294,19 @@
               "path": [
                 "api",
                 "passengers",
-                "6"
+                "0"
               ],
               "query": [
                 {
                   "key": "passengerId",
-                  "value": "6"
+                  "value": "0",
+                  "description": "ID of the passenger who owns this record."
                 }
               ]
-            }
-          }
-        },
-        {
-          "name": "Delete created passenger",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/passengers/6?passengerId=6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8081",
-              "path": [
-                "api",
-                "passengers",
-                "6"
-              ],
-              "query": [
-                {
-                  "key": "passengerId",
-                  "value": "6"
-                }
-              ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         }
       ]
     },
@@ -355,7 +314,7 @@
       "name": "Vehicles",
       "item": [
         {
-          "name": "Create vehicle for seeded driver 1",
+          "name": "Create vehicle",
           "request": {
             "method": "POST",
             "header": [
@@ -366,10 +325,15 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"licensePlate\": \"PM-VEHICLE-001\",\n  \"color\": \"Blue\",\n  \"passengerCapacity\": 4,\n  \"driverId\": 1\n}"
+              "raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"licensePlate\": \"PM-EXAMPLE-001\",\n  \"color\": \"Blue\",\n  \"passengerCapacity\": 4,\n  \"driverId\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "http://localhost:8081/api/drivers/1/vehicles",
+              "raw": "http://localhost:8081/api/drivers/0/vehicles",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -378,19 +342,21 @@
               "path": [
                 "api",
                 "drivers",
-                "1",
+                "0",
                 "vehicles"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "List vehicles for seeded driver 1",
+          "name": "List vehicles",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/drivers/1/vehicles",
+              "raw": "http://localhost:8081/api/drivers/0/vehicles",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -399,19 +365,21 @@
               "path": [
                 "api",
                 "drivers",
-                "1",
+                "0",
                 "vehicles"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Get created vehicle",
+          "name": "Get vehicle",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/drivers/1/vehicles/6",
+              "raw": "http://localhost:8081/api/drivers/0/vehicles/0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -420,15 +388,17 @@
               "path": [
                 "api",
                 "drivers",
-                "1",
+                "0",
                 "vehicles",
-                "6"
+                "0"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Update created vehicle",
+          "name": "Update vehicle",
           "request": {
             "method": "PUT",
             "header": [
@@ -439,10 +409,15 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla Updated\",\n  \"licensePlate\": \"PM-VEHICLE-001\",\n  \"color\": \"Blue\",\n  \"passengerCapacity\": 4,\n  \"driverId\": 1\n}"
+              "raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"licensePlate\": \"PM-EXAMPLE-001\",\n  \"color\": \"Black\",\n  \"passengerCapacity\": 4,\n  \"driverId\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "http://localhost:8081/api/drivers/1/vehicles/6",
+              "raw": "http://localhost:8081/api/drivers/0/vehicles/0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -451,34 +426,14 @@
               "path": [
                 "api",
                 "drivers",
-                "1",
+                "0",
                 "vehicles",
-                "6"
+                "0"
               ]
-            }
-          }
-        },
-        {
-          "name": "Delete created vehicle",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/drivers/1/vehicles/6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8081",
-              "path": [
-                "api",
-                "drivers",
-                "1",
-                "vehicles",
-                "6"
-              ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         }
       ]
     },
@@ -486,7 +441,7 @@
       "name": "Trips",
       "item": [
         {
-          "name": "Create trip for seeded driver and vehicle 1",
+          "name": "Create trip",
           "request": {
             "method": "POST",
             "header": [
@@ -497,7 +452,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"driverId\": 1,\n  \"vehicleId\": 1,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    { \"city\": \"Rabat\", \"passingTime\": \"2099-12-01T17:00:00\", \"priceFromDeparture\": 0 },\n    { \"city\": \"Kenitra\", \"passingTime\": \"2099-12-01T18:00:00\", \"priceFromDeparture\": 35 }\n  ]\n}"
+              "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T10:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Kenitra\",\n      \"passingTime\": \"2099-12-01T11:00:00\",\n      \"priceFromDeparture\": 35\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:8081/api/trips",
@@ -510,11 +470,13 @@
                 "api",
                 "trips"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending.\n\nEdit the stops and their times as needed; departure must be in the future."
+          },
+          "response": []
         },
         {
-          "name": "Search trips from Rabat to Kenitra",
+          "name": "Search trips",
           "request": {
             "method": "GET",
             "header": [],
@@ -533,23 +495,51 @@
               "query": [
                 {
                   "key": "departureCity",
-                  "value": "Rabat"
+                  "value": "Rabat",
+                  "description": "Required: departure city."
                 },
                 {
                   "key": "arrivalCity",
-                  "value": "Kenitra"
+                  "value": "Kenitra",
+                  "description": "Required: arrival city."
+                },
+                {
+                  "key": "date",
+                  "value": "2099-12-01",
+                  "description": "Optional departure date (YYYY-MM-DD).",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "",
+                  "description": "Optional maximum segment price.",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "Page index (starts at zero).",
+                  "disabled": true
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Results per page.",
+                  "disabled": true
                 }
               ]
-            }
-          }
+            },
+            "description": "Use Params to edit the cities and enable optional filters."
+          },
+          "response": []
         },
         {
-          "name": "Get created trip",
+          "name": "Get trip",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/trips/6",
+              "raw": "http://localhost:8081/api/trips/0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -558,13 +548,15 @@
               "path": [
                 "api",
                 "trips",
-                "6"
+                "0"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Update created trip",
+          "name": "Update trip",
           "request": {
             "method": "PUT",
             "header": [
@@ -575,10 +567,15 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"driverId\": 1,\n  \"vehicleId\": 1,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    { \"city\": \"Rabat\", \"passingTime\": \"2099-12-01T17:00:00\", \"priceFromDeparture\": 0 },\n    { \"city\": \"Kenitra\", \"passingTime\": \"2099-12-01T18:30:00\", \"priceFromDeparture\": 40 }\n  ]\n}"
+              "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T10:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Kenitra\",\n      \"passingTime\": \"2099-12-01T11:30:00\",\n      \"priceFromDeparture\": 40\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "http://localhost:8081/api/trips/6?driverId=1",
+              "raw": "http://localhost:8081/api/trips/0?driverId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -587,30 +584,27 @@
               "path": [
                 "api",
                 "trips",
-                "6"
+                "0"
               ],
               "query": [
                 {
                   "key": "driverId",
-                  "value": "1"
+                  "value": "0",
+                  "description": "ID of the driver who owns this record."
                 }
               ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Reservations",
-      "description": "Create, list, update, cancel, and delete reservations.",
-      "item": [
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
+        },
         {
-          "name": "Get all reservations",
+          "name": "Complete trip",
           "request": {
-            "method": "GET",
+            "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/reservations",
+              "raw": "http://localhost:8081/api/trips/0/complete?driverId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -618,13 +612,29 @@
               "port": "8081",
               "path": [
                 "api",
-                "reservations"
+                "trips",
+                "0",
+                "complete"
+              ],
+              "query": [
+                {
+                  "key": "driverId",
+                  "value": "0",
+                  "description": "ID of the driver who owns this record."
+                }
               ]
-            }
-          }
-        },
+            },
+            "description": "Use a trip that has already departed. A future trip returns 400 (TRIP_NOT_DEPARTED).\n\nReplace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
         {
-          "name": "Create booking for seeded passenger 1",
+          "name": "Create reservation",
           "request": {
             "method": "POST",
             "header": [
@@ -635,7 +645,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"passengerId\": 1,\n  \"tripId\": 6,\n  \"boardingPoint\": \"Rabat\",\n  \"dropOffPoint\": \"Kenitra\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 0,\n  \"reservationDate\": \"2026-11-23T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}"
+              "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Rabat\",\n  \"dropOffPoint\": \"Kenitra\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 35,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:8081/api/reservations",
@@ -648,11 +663,75 @@
                 "api",
                 "reservations"
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Update created booking",
+          "name": "List reservations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/reservations",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "reservations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List passenger reservations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/passengers/0/reservations?requestingPassengerId=0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "passengers",
+                "0",
+                "reservations"
+              ],
+              "query": [
+                {
+                  "key": "requestingPassengerId",
+                  "value": "0",
+                  "description": "ID of the passenger requesting their own reservation history."
+                },
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "Page index (starts at zero).",
+                  "disabled": true
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "Results per page.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
+        },
+        {
+          "name": "Update reservation",
           "request": {
             "method": "PUT",
             "header": [
@@ -663,10 +742,15 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"passengerId\": 1,\n  \"tripId\": 6,\n  \"boardingPoint\": \"Rabat\",\n  \"dropOffPoint\": \"Kenitra\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 35,\n  \"reservationDate\": \"2026-11-23T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}"
+              "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Rabat\",\n  \"dropOffPoint\": \"Kenitra\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 40,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "http://localhost:8081/api/reservations/6?passengerId=1",
+              "raw": "http://localhost:8081/api/reservations/0?passengerId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -675,24 +759,27 @@
               "path": [
                 "api",
                 "reservations",
-                "6"
+                "0"
               ],
               "query": [
                 {
                   "key": "passengerId",
-                  "value": "1"
+                  "value": "0",
+                  "description": "ID of the passenger who owns this record."
                 }
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending.\n\nEdit totalAmount, reservationDate, and the other body fields to match the reservation you intend to update."
+          },
+          "response": []
         },
         {
-          "name": "Cancel created booking",
+          "name": "Cancel reservation",
           "request": {
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/reservations/6/cancel?passengerId=1",
+              "raw": "http://localhost:8081/api/reservations/0/cancel?passengerId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -701,56 +788,1087 @@
               "path": [
                 "api",
                 "reservations",
-                "6",
+                "0",
                 "cancel"
               ],
               "query": [
                 {
                   "key": "passengerId",
-                  "value": "1"
+                  "value": "0",
+                  "description": "ID of the passenger who owns this record."
                 }
               ]
-            }
-          }
-        },
-        {
-          "name": "Delete created booking",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/reservations/6?passengerId=1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8081",
-              "path": [
-                "api",
-                "reservations",
-                "6"
-              ],
-              "query": [
-                {
-                  "key": "passengerId",
-                  "value": "1"
-                }
-              ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         }
       ]
     },
     {
-      "name": "Trip actions",
+      "name": "Validation Scenarios",
+      "description": "Manual acceptance checks for the 11 numbered scenarios on page 5 of the project brief. Run against a development database. Prepare two drivers, one vehicle for each driver (Hamid’s vehicle must have capacity 4), and three passengers: Salma, Karim, and Imane. Use the standard resource folders to create or look up these records. Replace each example ID of 0 with the appropriate real ID in the URL, Params, or Body. Record the IDs returned by create requests. Compare responses manually; the collection uses no variables or scripts.",
       "item": [
         {
-          "name": "Try completing future trip (expected 400)",
+          "name": "Baseline Trip and Booking Workflow",
+          "description": "Run in order on the same trip. In cases 01 and 03, check the amount in the POST response and the remaining seats and status in the trip detail. If you change the example trip date, edit the search date to match.",
+          "item": [
+            {
+              "name": "Setup — Publish the Four-Stop Trip",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T17:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Casablanca\",\n      \"passingTime\": \"2099-12-01T18:15:00\",\n      \"priceFromDeparture\": 40\n    },\n    {\n      \"city\": \"Settat\",\n      \"passingTime\": \"2099-12-01T19:15:00\",\n      \"priceFromDeparture\": 70\n    },\n    {\n      \"city\": \"Marrakech\",\n      \"passingTime\": \"2099-12-01T21:30:00\",\n      \"priceFromDeparture\": 120\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/trips",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips"
+                  ]
+                },
+                "description": "Use Hamid’s driver ID and his four-seat vehicle ID. Offer three seats. Set departure at least three days ahead in the server’s local time. Expect 201; record the trip ID."
+              },
+              "response": []
+            },
+            {
+              "name": "01 — Book One Seat on a Segment",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Settat\",\n  \"dropOffPoint\": \"Marrakech\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 50,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations"
+                  ]
+                },
+                "description": "Use Salma’s passenger ID and the baseline trip ID. Expect 201, totalAmount 50.00 DH and status CONFIRMED."
+              },
+              "response": []
+            },
+            {
+              "name": "01 — Verify Remaining Seats",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "0"
+                  ]
+                },
+                "description": "Use the baseline trip ID. Expect 200, remainingSeats 2 and status PUBLISHED."
+              },
+              "response": []
+            },
+            {
+              "name": "02 — Exclude the Reverse Segment",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/search?departureCity=Settat&arrivalCity=Casablanca&date=2099-12-01",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "departureCity",
+                      "value": "Settat"
+                    },
+                    {
+                      "key": "arrivalCity",
+                      "value": "Casablanca"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2099-12-01"
+                    }
+                  ]
+                },
+                "description": "Expect 200. Hamid’s baseline trip ID must not appear in the results. Other trips may match."
+              },
+              "response": []
+            },
+            {
+              "name": "03 — Book the Last Two Seats",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Casablanca\",\n  \"dropOffPoint\": \"Marrakech\",\n  \"numberOfSeats\": 2,\n  \"totalAmount\": 160,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations"
+                  ]
+                },
+                "description": "Use Karim’s passenger ID and the baseline trip ID. Expect 201 and totalAmount 160.00 DH. Record Karim’s reservation ID."
+              },
+              "response": []
+            },
+            {
+              "name": "03 — Verify Full Trip Status",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "0"
+                  ]
+                },
+                "description": "Use the baseline trip ID. Expect 200, remainingSeats 0 and status FULL."
+              },
+              "response": []
+            },
+            {
+              "name": "04 — Reject Booking on a Full Trip",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Settat\",\n  \"dropOffPoint\": \"Marrakech\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 50,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations"
+                  ]
+                },
+                "description": "Use Imane’s passenger ID and the baseline trip ID while it is FULL. Brief expectation: 409. The current backend may return 400 (TRIP_NOT_PUBLISHED); that is a mismatch, not a pass."
+              },
+              "response": []
+            },
+            {
+              "name": "05 — Cancel a Booking Before the Deadline",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations/0/cancel?passengerId=0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations",
+                    "0",
+                    "cancel"
+                  ],
+                  "query": [
+                    {
+                      "key": "passengerId",
+                      "value": "0",
+                      "description": "ID of the passenger who owns this record."
+                    }
+                  ]
+                },
+                "description": "Use Karim’s reservation ID in the URL and his passenger ID in Params. Run at least 24 hours before the baseline trip departs (the brief’s example uses three days). Expect 204."
+              },
+              "response": []
+            },
+            {
+              "name": "05 — Verify the Trip Reopens",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "0"
+                  ]
+                },
+                "description": "Use the baseline trip ID. Expect 200, remainingSeats 2 and status PUBLISHED."
+              },
+              "response": []
+            },
+            {
+              "name": "06 — Reject Boarding After Drop-Off",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Marrakech\",\n  \"dropOffPoint\": \"Settat\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 0,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations"
+                  ]
+                },
+                "description": "Use Imane’s passenger ID and the reopened baseline trip ID. Expect 400 (REVERSED_STOPS)."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Publication and Trip Lifecycle Rules",
+          "description": "Use valid IDs and change only the condition under test. For time-sensitive checks, use the server’s local time.",
+          "item": [
+            {
+              "name": "07 — Reject Seats Above Vehicle Capacity",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 5,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T17:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Casablanca\",\n      \"passingTime\": \"2099-12-01T18:15:00\",\n      \"priceFromDeparture\": 40\n    },\n    {\n      \"city\": \"Settat\",\n      \"passingTime\": \"2099-12-01T19:15:00\",\n      \"priceFromDeparture\": 70\n    },\n    {\n      \"city\": \"Marrakech\",\n      \"passingTime\": \"2099-12-01T21:30:00\",\n      \"priceFromDeparture\": 120\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/trips",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips"
+                  ]
+                },
+                "description": "Use Hamid’s ID and his own vehicle with capacity 4. This request offers 5 seats. Expect 400. Keep departure in the future."
+              },
+              "response": []
+            },
+            {
+              "name": "08 — Reject Another Driver’s Vehicle",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T17:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Casablanca\",\n      \"passingTime\": \"2099-12-01T18:15:00\",\n      \"priceFromDeparture\": 40\n    },\n    {\n      \"city\": \"Settat\",\n      \"passingTime\": \"2099-12-01T19:15:00\",\n      \"priceFromDeparture\": 70\n    },\n    {\n      \"city\": \"Marrakech\",\n      \"passingTime\": \"2099-12-01T21:30:00\",\n      \"priceFromDeparture\": 120\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/trips",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips"
+                  ]
+                },
+                "description": "Use Hamid’s driver ID and a vehicle ID owned by a different driver. Keep the departure in the future and use a vehicle with capacity of at least 3. Expect 403."
+              },
+              "response": []
+            },
+            {
+              "name": "09 — Reject Completion Before Departure",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/0/complete?driverId=0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "0",
+                    "complete"
+                  ],
+                  "query": [
+                    {
+                      "key": "driverId",
+                      "value": "0",
+                      "description": "ID of the driver who owns this record."
+                    }
+                  ]
+                },
+                "description": "Use Hamid’s driver ID and the ID of a published trip departing later today (create a separate future trip, or use the baseline trip while it is still ahead). Brief expectation: 409. The current backend returns 400 (TRIP_NOT_DEPARTED); that is a mismatch, not a pass."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Cancellation Rules",
+          "description": "Use two separate trips for cases 10 and 11. Do not reuse the baseline trip or the IDs from its reservations.",
+          "item": [
+            {
+              "name": "10 — Setup: Publish a Trip Departing in Two Hours",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T17:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Casablanca\",\n      \"passingTime\": \"2099-12-01T18:15:00\",\n      \"priceFromDeparture\": 40\n    },\n    {\n      \"city\": \"Settat\",\n      \"passingTime\": \"2099-12-01T19:15:00\",\n      \"priceFromDeparture\": 70\n    },\n    {\n      \"city\": \"Marrakech\",\n      \"passingTime\": \"2099-12-01T21:30:00\",\n      \"priceFromDeparture\": 120\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/trips",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips"
+                  ]
+                },
+                "description": "Use Hamid’s driver and vehicle IDs. Replace every example stop timestamp: choose first departure about two hours from the current server time and keep the following stops strictly later. Expect 201."
+              },
+              "response": []
+            },
+            {
+              "name": "10 — Setup: Create the Booking to Cancel",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Settat\",\n  \"dropOffPoint\": \"Marrakech\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 50,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations"
+                  ]
+                },
+                "description": "Use Salma’s ID and the trip ID from case 10. Expect 201; record the reservation ID."
+              },
+              "response": []
+            },
+            {
+              "name": "10 — Reject Cancellation Within 24 Hours",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations/0/cancel?passengerId=0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations",
+                    "0",
+                    "cancel"
+                  ],
+                  "query": [
+                    {
+                      "key": "passengerId",
+                      "value": "0",
+                      "description": "ID of the passenger who owns this record."
+                    }
+                  ]
+                },
+                "description": "Use the reservation ID from case 10 and Salma’s passenger ID. Make sure the trip still departs in about two hours. Expect 409 (CANCELLATION_TOO_LATE)."
+              },
+              "response": []
+            },
+            {
+              "name": "11 — Setup: Publish a Separate Trip",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T17:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Casablanca\",\n      \"passingTime\": \"2099-12-01T18:15:00\",\n      \"priceFromDeparture\": 40\n    },\n    {\n      \"city\": \"Settat\",\n      \"passingTime\": \"2099-12-01T19:15:00\",\n      \"priceFromDeparture\": 70\n    },\n    {\n      \"city\": \"Marrakech\",\n      \"passingTime\": \"2099-12-01T21:30:00\",\n      \"priceFromDeparture\": 120\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/trips",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips"
+                  ]
+                },
+                "description": "Use Hamid’s IDs. Choose a future departure different from the baseline trip; set all the stop timestamps accordingly. Expect 201."
+              },
+              "response": []
+            },
+            {
+              "name": "11 — Setup: Confirm the First Booking",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Settat\",\n  \"dropOffPoint\": \"Marrakech\",\n  \"numberOfSeats\": 1,\n  \"totalAmount\": 50,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations"
+                  ]
+                },
+                "description": "Use Salma’s ID and the separate trip ID from case 11. Expect 201 and CONFIRMED; record this reservation ID."
+              },
+              "response": []
+            },
+            {
+              "name": "11 — Setup: Confirm the Second Booking",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"passengerId\": 0,\n  \"tripId\": 0,\n  \"boardingPoint\": \"Casablanca\",\n  \"dropOffPoint\": \"Marrakech\",\n  \"numberOfSeats\": 2,\n  \"totalAmount\": 160,\n  \"reservationDate\": \"2026-11-24T12:00:00\",\n  \"status\": \"CONFIRMED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/reservations",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "reservations"
+                  ]
+                },
+                "description": "Use Karim’s ID and the same case 11 trip ID. Expect 201 and CONFIRMED; record this reservation ID."
+              },
+              "response": []
+            },
+            {
+              "name": "11 — Cancel a Trip With Confirmed Bookings",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/0/cancel?driverId=0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "0",
+                    "cancel"
+                  ],
+                  "query": [
+                    {
+                      "key": "driverId",
+                      "value": "0",
+                      "description": "ID of the driver who owns this record."
+                    }
+                  ]
+                },
+                "description": "Use the case 11 trip ID and Hamid’s driver ID. Expect 204. Verify all three state changes using the next requests."
+              },
+              "response": []
+            },
+            {
+              "name": "11 — Verify the Trip Is Cancelled",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "0"
+                  ]
+                },
+                "description": "Use the case 11 trip ID. Expect 200 and status CANCELLED."
+              },
+              "response": []
+            },
+            {
+              "name": "11 — Verify the First Booking Is Cancelled",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/passengers/0/reservations?requestingPassengerId=0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "passengers",
+                    "0",
+                    "reservations"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestingPassengerId",
+                      "value": "0",
+                      "description": "ID of the passenger requesting their own reservation history."
+                    },
+                    {
+                      "key": "page",
+                      "value": "0",
+                      "description": "Page index (starts at zero).",
+                      "disabled": true
+                    },
+                    {
+                      "key": "size",
+                      "value": "10",
+                      "description": "Results per page.",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Use Salma’s ID in the URL and requestingPassengerId. Expect 200. Locate the case 11 reservation ID in the history (adjust pagination if needed) and verify CANCELLED."
+              },
+              "response": []
+            },
+            {
+              "name": "11 — Verify the Second Booking Is Cancelled",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/passengers/0/reservations?requestingPassengerId=0",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "passengers",
+                    "0",
+                    "reservations"
+                  ],
+                  "query": [
+                    {
+                      "key": "requestingPassengerId",
+                      "value": "0",
+                      "description": "ID of the passenger requesting their own reservation history."
+                    },
+                    {
+                      "key": "page",
+                      "value": "0",
+                      "description": "Page index (starts at zero).",
+                      "disabled": true
+                    },
+                    {
+                      "key": "size",
+                      "value": "10",
+                      "description": "Results per page.",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Use Karim’s ID in the URL and requestingPassengerId. Expect 200. Locate the case 11 reservation ID in the history (adjust pagination if needed) and verify CANCELLED."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Search Filters and Pagination",
+          "description": "Run while the baseline trip is PUBLISHED and has seats available. Match dates to the fixtures you created. The known PostgreSQL search error is a backend issue if it occurs.",
+          "item": [
+            {
+              "name": "Find a Segment on the Departure Date",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/search?departureCity=Casablanca&arrivalCity=Settat&date=2099-12-01",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "departureCity",
+                      "value": "Casablanca"
+                    },
+                    {
+                      "key": "arrivalCity",
+                      "value": "Settat"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2099-12-01"
+                    }
+                  ]
+                },
+                "description": "Expect 200; the baseline trip should appear with segmentPrice 30.00 DH."
+              },
+              "response": []
+            },
+            {
+              "name": "Exclude a Trip on a Different Date",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/search?departureCity=Casablanca&arrivalCity=Settat&date=2099-12-02",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "departureCity",
+                      "value": "Casablanca"
+                    },
+                    {
+                      "key": "arrivalCity",
+                      "value": "Settat"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2099-12-02"
+                    }
+                  ]
+                },
+                "description": "Set the date one day after your baseline trip. Expect 200 and no baseline trip in the results."
+              },
+              "response": []
+            },
+            {
+              "name": "Include a Segment at the Price Limit",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/search?departureCity=Casablanca&arrivalCity=Settat&date=2099-12-01&maxPrice=30",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "departureCity",
+                      "value": "Casablanca"
+                    },
+                    {
+                      "key": "arrivalCity",
+                      "value": "Settat"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2099-12-01"
+                    },
+                    {
+                      "key": "maxPrice",
+                      "value": "30"
+                    }
+                  ]
+                },
+                "description": "Expect 200 and the baseline trip at 30.00 DH per seat. The full-trip price of 120.00 DH should not affect this match."
+              },
+              "response": []
+            },
+            {
+              "name": "Exclude a Segment Above the Price Limit",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/search?departureCity=Casablanca&arrivalCity=Settat&date=2099-12-01&maxPrice=29.99",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "departureCity",
+                      "value": "Casablanca"
+                    },
+                    {
+                      "key": "arrivalCity",
+                      "value": "Settat"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2099-12-01"
+                    },
+                    {
+                      "key": "maxPrice",
+                      "value": "29.99"
+                    }
+                  ]
+                },
+                "description": "Expect 200 and no baseline trip in the results; the segment costs 30.00 DH."
+              },
+              "response": []
+            },
+            {
+              "name": "Setup — Publish a Second Search Result",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"driverId\": 0,\n  \"vehicleId\": 0,\n  \"offeredSeats\": 3,\n  \"stopPoints\": [\n    {\n      \"city\": \"Rabat\",\n      \"passingTime\": \"2099-12-01T18:00:00\",\n      \"priceFromDeparture\": 0\n    },\n    {\n      \"city\": \"Casablanca\",\n      \"passingTime\": \"2099-12-01T19:15:00\",\n      \"priceFromDeparture\": 40\n    },\n    {\n      \"city\": \"Settat\",\n      \"passingTime\": \"2099-12-01T20:15:00\",\n      \"priceFromDeparture\": 70\n    },\n    {\n      \"city\": \"Marrakech\",\n      \"passingTime\": \"2099-12-01T22:30:00\",\n      \"priceFromDeparture\": 120\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/trips",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips"
+                  ]
+                },
+                "description": "Use valid ownership IDs and the same date and route as the baseline trip, but later passing times. Expect 201. Keep both trips PUBLISHED with seats available."
+              },
+              "response": []
+            },
+            {
+              "name": "Read the First Page in Departure Order",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/search?departureCity=Casablanca&arrivalCity=Settat&date=2099-12-01&page=0&size=1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "departureCity",
+                      "value": "Casablanca"
+                    },
+                    {
+                      "key": "arrivalCity",
+                      "value": "Settat"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2099-12-01"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": "Expect 200 and at most one result. With only the two matching fixtures, expect the earlier trip’s ID."
+              },
+              "response": []
+            },
+            {
+              "name": "Read the Next Page in Departure Order",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/trips/search?departureCity=Casablanca&arrivalCity=Settat&date=2099-12-01&page=1&size=1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "trips",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "departureCity",
+                      "value": "Casablanca"
+                    },
+                    {
+                      "key": "arrivalCity",
+                      "value": "Settat"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2099-12-01"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "size",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": "Expect 200 and at most one result. With only the two matching fixtures, expect the later trip’s ID, distinct from the first page."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cleanup",
+      "description": "Optional manual cleanup. Replace IDs of 0 with the IDs of records you intend to delete or cancel. Remove dependent records first, in the order shown.",
+      "item": [
+        {
+          "name": "Delete reservation",
           "request": {
-            "method": "PATCH",
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/trips/6/complete?driverId=1",
+              "raw": "http://localhost:8081/api/reservations/0?passengerId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -758,26 +1876,28 @@
               "port": "8081",
               "path": [
                 "api",
-                "trips",
-                "6",
-                "complete"
+                "reservations",
+                "0"
               ],
               "query": [
                 {
-                  "key": "driverId",
-                  "value": "1"
+                  "key": "passengerId",
+                  "value": "0",
+                  "description": "ID of the passenger who owns this record."
                 }
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Cancel created trip",
+          "name": "Cancel trip",
           "request": {
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/trips/6/cancel?driverId=1",
+              "raw": "http://localhost:8081/api/trips/0/cancel?driverId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -786,25 +1906,28 @@
               "path": [
                 "api",
                 "trips",
-                "6",
+                "0",
                 "cancel"
               ],
               "query": [
                 {
                   "key": "driverId",
-                  "value": "1"
+                  "value": "0",
+                  "description": "ID of the driver who owns this record."
                 }
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         },
         {
-          "name": "Delete created trip",
+          "name": "Delete trip",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8081/api/trips/6?driverId=1",
+              "raw": "http://localhost:8081/api/trips/0?driverId=0",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -813,16 +1936,101 @@
               "path": [
                 "api",
                 "trips",
-                "6"
+                "0"
               ],
               "query": [
                 {
                   "key": "driverId",
-                  "value": "1"
+                  "value": "0",
+                  "description": "ID of the driver who owns this record."
                 }
               ]
-            }
-          }
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete vehicle",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/drivers/0/vehicles/0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "drivers",
+                "0",
+                "vehicles",
+                "0"
+              ]
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete passenger",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/passengers/0?passengerId=0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "passengers",
+                "0"
+              ],
+              "query": [
+                {
+                  "key": "passengerId",
+                  "value": "0",
+                  "description": "ID of the passenger who owns this record."
+                }
+              ]
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete driver",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/drivers/0?driverId=0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "drivers",
+                "0"
+              ],
+              "query": [
+                {
+                  "key": "driverId",
+                  "value": "0",
+                  "description": "ID of the driver who owns this record."
+                }
+              ]
+            },
+            "description": "Replace each example ID of 0 with the appropriate real ID before sending."
+          },
+          "response": []
         }
       ]
     }
