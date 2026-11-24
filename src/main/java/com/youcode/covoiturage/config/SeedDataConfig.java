@@ -28,7 +28,7 @@ import com.youcode.covoiturage.service.TripService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Seeds a repeatable demonstration dataset for local development.
+ * SeedDataConfig
  */
 @Slf4j
 @Configuration
